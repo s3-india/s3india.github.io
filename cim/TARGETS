@@ -1,0 +1,20 @@
+24/25/26 March 2020
+Study Analysis CIMDraw :- RIOT JS, CIM, 
+
+27 March 2020
+1. improve the editor with basic functions such as undo/redo, 
+2. re-layout the UI, with a bigger drawing canvas 
+3. popup or slide-in based properties window.
+
+Report for 27/28/29 3/2020
+1. Code Study for CIMDraw. 
+2. Searched for UX Template layout for improving CIMDraw Editor. https://github.com/givanz/VvvebJs/tree/master/demo fits best as both VvvebJs  CIMDraw uses bootsraap & JQuery as core.
+3. Merged CIMDraw in VvvebJs Template Layput as UX of CIMDRaw is poor.
+4. Improved following UI/UX components
+    - Header Layout with Menu Support, edit, select, pan for Drawing Canvas, Undo/Redo Icons(Core code for undo/redo is not done), preview, fullscreen support.
+    - Added left drawer for CIMDraw elements(breaker, disconnector, etc).
+    - Added right drawer for object(s) properties. Imporved the old layout as it was taking too much screen space
+    - Center Canvas for Drawing
+    - bottom panel for compilation, debug, error window.
+
+31/3/2020

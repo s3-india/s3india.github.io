@@ -1,0 +1,32 @@
+1. Add Webpack bundler
+2. XML load parse > 1GB Figure out
+3. for undo go for svg editor logic, https://github.com/givanz/VvvebJs
+4. https://blog.dreamfactory.com/what-is-an-esb-and-its-alternatives/
+
+https://github.com/RWTH-IFHT/cimpyorm/tree/Releases/cimpyorm/res/schemata/CIM16
+https://gitlab-research.centralesupelec.fr/RiseClipseGroup/riseclipse-metamodel-iec61970cim17-iec61968cim13/-/tree/master
+
+Electron Multi App Launcher
+Server Code to handle Electron Multi App Data.
+
+CIM Loader
+
+CIM editor
+1. load other format data from rdf/xml model
+
+27/4/2020
+- (done) Hide Unused File Menu Options
+
+- (done) Selection of object on left panel when drawing and de-selection when Canvas in Drawing mode.
+- While creating new object, default new1 name is added, instead of that a unique /incremental (breaker 1, breaker 2...)
+  should exist for identify objects categorized
+- Validation while exporting xml File
+- Think of Right Pane tree layout Improvement.
+- (done) connecting node or line, bus, ac line segment stroke width increase for smooth selection for right click menu on them
+- Add Support for diagram list, selection menu for diagram list  in UI. 
+- Generic Purpose Server | Generic Purpose Electron App (with multi App Embedded in it)
+- (working on it) For Analog - > Add Mesurand Value which will be linked to Remote Source(with custom attribute option for naming)
+- (working on it) For Discrete - > Add Discrete Value which will be linked to Remote Source(with custom attribute option for naming)
+
+- On Click or View in Right Tree Option against a cim object, it should be selected(elem prop open) in Right tree Panel and scroll to View. 
+- Resize Left and  Right Pane on Mouse Drag. 
