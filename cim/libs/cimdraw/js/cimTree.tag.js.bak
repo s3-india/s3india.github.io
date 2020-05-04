@@ -1283,9 +1283,7 @@ function cimTreeTag(opts) {
             .attr("aria-expanded", "false");
         elementEnumBtn.append("span").attr("class", "enumVal").each(setEnumValueFromModel);
         elementEnumBtn.append("span").attr("class", "caret");
-        let elementEnumList = elementEnum.append("div")
-            .attr("class", "dropdown-menu")
-            .attr("style", "height: 200px;overflow-y: scroll;"); //Added by SS
+        let elementEnumList = elementEnum.append("div").attr("class", "dropdown-menu");
         elementEnumList
             .selectAll("a")
             .data(function (d) {
