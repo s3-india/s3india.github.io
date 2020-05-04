@@ -251,8 +251,7 @@ body {
 
 		width: $builder-left-panel-width;
 		width: calc(var(--builder-left-panel-width));
-		//@extend: 98%;
-		height: 100%;
+		height: 98%;
 		max-height: 100%;
 
 		#filemanager {
@@ -901,8 +900,7 @@ li[data-type] {
 
 	>div {
 		position: absolute;
-		//height: 98%;
-		height: 100%;
+		height: 98%;
 	}
 
 	width:100%;
