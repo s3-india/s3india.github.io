@@ -100,7 +100,7 @@ function cimTreeTag(opts) {
     self.parent.on("cleanUp", function () {
         self.diagramName = "";
     });
-    
+
     // listen to 'showDiagram' event from parent
     self.parent.on("showDiagram", function (file, name, element) {
         if (decodeURI(name) !== self.diagramName) {
@@ -483,9 +483,9 @@ function cimTreeTag(opts) {
         allGeoRegions = getObjects(["cim:GeographicalRegion"])["cim:GeographicalRegion"];
 
         //Added by SS
-        allLocations =  getObjects(["cim:Location"])["cim:Location"];
-        allCoordinateSystems =  getObjects(["cim:CoordinateSystem"])["cim:CoordinateSystem"];
-        allPositionPoints =  getObjects(["cim:PositionPoint"])["cim:PositionPoint"];
+        allLocations = getObjects(["cim:Location"])["cim:Location"];
+        allCoordinateSystems = getObjects(["cim:CoordinateSystem"])["cim:CoordinateSystem"];
+        allPositionPoints = getObjects(["cim:PositionPoint"])["cim:PositionPoint"];
 
         if (showAllObjects === false) {
             allContainers = self.model.getLinkedObjects(
@@ -518,8 +518,8 @@ function cimTreeTag(opts) {
                 ["OperationalLimitSet.Equipment",
                     "OperationalLimitSet.Terminal/Terminal.ConductingEquipment"
                 ]);
-            
-           
+
+
         } else {
             allContainers = getObjects(contNames);
             allMeasurements = getObjects(measNames);
@@ -629,13 +629,13 @@ function cimTreeTag(opts) {
         //     let subGeos = self.model.getTargets(
         //         [d],
         //         "GeographicalRegion.Regions");
-            // self.subGeoRegions(
-            //     d3.select(this),
-            //     subGeos);
-            // self.subAddButton(
-            //     d3.select(this),
-            //     "SubGeographicalRegion",
-            //     "cim:SubGeographicalRegion.Region");
+        // self.subGeoRegions(
+        //     d3.select(this),
+        //     subGeos);
+        // self.subAddButton(
+        //     d3.select(this),
+        //     "SubGeographicalRegion",
+        //     "cim:SubGeographicalRegion.Region");
         // });
         self.createDeleteMenu(locEnter);
     }
@@ -1144,10 +1144,9 @@ function cimTreeTag(opts) {
 
                     // ];
 
-                    if(profile == "GL")
-                    {
+                    if (profile == "GL") {
                         return self.model.schema.getSchemaLinks(d.localName, profile)
-                         .filter(el => hiddenLinks.indexOf(el.attributes[0].value) < 0);
+                            .filter(el => hiddenLinks.indexOf(el.attributes[0].value) < 0);
                     }
                     return self.model.schema.getSchemaLinks(d.localName, profile)
                         .filter(el => self.model.getAttribute(el, "cims:AssociationUsed").textContent === "Yes")
@@ -1449,11 +1448,10 @@ function cimTreeTag(opts) {
                         ret = self.model.schema.isA(range, cimObj.datum()) === true;
 
                         //Added By SS
-                        if(range == "SubGeographicalRegion" && cimObj.datum().localName == "GeographicalRegion")
-                        {
+                        if (range == "SubGeographicalRegion" && cimObj.datum().localName == "GeographicalRegion") {
                             ret = true;
                         }
-                        
+
                     }
                     return ret;
                 });
@@ -1463,8 +1461,7 @@ function cimTreeTag(opts) {
                     if (cimObj.size() > 0) {
                         ret = self.model.schema.isA(range, cimObj.datum()) === false;
 
-                        if(range == "SubGeographicalRegion" && cimObj.datum().localName == "GeographicalRegion")
-                        {
+                        if (range == "SubGeographicalRegion" && cimObj.datum().localName == "GeographicalRegion") {
                             ret = false;
                         }
                     }
