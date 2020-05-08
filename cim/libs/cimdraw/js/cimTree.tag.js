@@ -548,11 +548,15 @@ function cimTreeTag(opts) {
         // self.createDeleteMenu(analogEnter);
         //Added by SS
         self.analogs(cimMeasurements, allMeasurements["cim:Analog"]);
-
+        self.analogValues(cimMeasurements, []);
+        
         // let discEnter = self.elements(cimMeasurements, "Discrete", "Discretes", allMeasurements["cim:Discrete"]);
         // self.createDeleteMenu(discEnter);
         //Added by SS
         self.discretes(cimMeasurements, allMeasurements["cim:Discrete"]);
+        self.discreteValues(cimMeasurements, []);
+
+        self.remoteSources(cimMeasurements, []);
         // ====================================================================
         // ============================= "Bases" ==============================
         // ====================================================================
