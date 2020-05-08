@@ -256,12 +256,16 @@ function cimTreeTag(opts) {
                 self.elements(genUnits, "ThermalGeneratingUnit", "Thermal Units", [object]);
                 break;
             case "cim:Analog":
-                let analogEnter = self.elements(cimMeasurements, "Analog", "Analogs", [object]);
-                self.createDeleteMenu(analogEnter);
+                // let analogEnter = self.elements(cimMeasurements, "Analog", "Analogs", [object]);
+                // self.createDeleteMenu(analogEnter);
+                 //Added by SS
+                 self.analogs(cimMeasurements, [object]);
                 break;
             case "cim:Discrete":
-                let discEnter = self.elements(cimMeasurements, "Discrete", "Discretes", [object]);
-                self.createDeleteMenu(discEnter);
+                // let discEnter = self.elements(cimMeasurements, "Discrete", "Discretes", [object]);
+                // self.createDeleteMenu(discEnter);
+                //Added by SS
+                self.discretes(cimMeasurements, [object]);
                 break;
             case "cim:LoadResponseCharacteristic":
                 let lrEnter = self.elements(cimCurvesAndRegs, "LoadResponseCharacteristic", "Load Response Characteristics", [object]);
@@ -519,7 +523,6 @@ function cimTreeTag(opts) {
                     "OperationalLimitSet.Terminal/Terminal.ConductingEquipment"
                 ]);
 
-
         } else {
             allContainers = getObjects(contNames);
             allMeasurements = getObjects(measNames);
@@ -541,10 +544,15 @@ function cimTreeTag(opts) {
         // ====================================================================
         // ========================= "Measurements" ===========================
         // ====================================================================
-        let analogEnter = self.elements(cimMeasurements, "Analog", "Analogs", allMeasurements["cim:Analog"]);
-        self.createDeleteMenu(analogEnter);
-        let discEnter = self.elements(cimMeasurements, "Discrete", "Discretes", allMeasurements["cim:Discrete"]);
-        self.createDeleteMenu(discEnter);
+        // let analogEnter = self.elements(cimMeasurements, "Analog", "Analogs", allMeasurements["cim:Analog"]);
+        // self.createDeleteMenu(analogEnter);
+        //Added by SS
+        self.analogs(cimMeasurements, allMeasurements["cim:Analog"]);
+
+        // let discEnter = self.elements(cimMeasurements, "Discrete", "Discretes", allMeasurements["cim:Discrete"]);
+        // self.createDeleteMenu(discEnter);
+        //Added by SS
+        self.discretes(cimMeasurements, allMeasurements["cim:Discrete"]);
         // ====================================================================
         // ============================= "Bases" ==============================
         // ====================================================================
@@ -646,6 +654,118 @@ function cimTreeTag(opts) {
     self.coordinateSystems = function (tab, allCoordinateSystems) {
         let locEnter = self.elements(tab, "CoordinateSystem", "Coordinate Systems", allCoordinateSystems);
         self.createDeleteMenu(locEnter);
+    }
+
+    self.discretes = function (tab, allDiscretes) {
+        let discEnter = self.elements(tab, "Discrete", "Discretes", allDiscretes);
+        discEnter.each(function (d, i) {
+            let subDiscVals = self.model.getTargets(
+                [d],
+                "Discrete.DiscreteValues");
+
+            if (subDiscVals.length == 0) {
+                let newObject = self.model.createObject("cim:DiscreteValue");
+                self.model.setLink(newObject, "cim:DiscreteValue.Discrete", discEnter.data()[0]);
+                self.model.addToActiveDiagram(newObject, []);
+                self.discreteValues(tab, [newObject], function (parent) {
+                    // self.model.setLink(newObject,"cim:Discrete.DiscreteValues", parent);
+                    // self.model.addToActiveDiagram(newObject, []);
+                });
+
+            } else {
+                self.discreteValues(
+                    tab,
+                    subDiscVals);
+            }
+        });
+
+        self.createDeleteMenu(discEnter);
+    }
+
+    self.discreteValues = function (tab, allDiscreteValues, cb) {
+        let discValEnter = self.elements(tab, "DiscreteValue", "Discrete Values", allDiscreteValues);
+
+        // if (cb != undefined) {
+        //     cb(discValEnter.data()[0]);
+        // }
+
+        discValEnter.each(function (d, i) {
+            let subRemSrc = self.model.getTargets(
+                [d],
+                "MeasurementValue.RemoteSource");
+
+            if (subRemSrc.length == 0) {
+                let newObject = self.model.createObject("cim:RemoteSource");
+                self.model.setLink(newObject, "cim:RemoteSource.MeasurementValue", discValEnter.data()[0]);
+                self.model.addToActiveDiagram(newObject, []);
+                self.remoteSources(tab, [newObject], function (parent) {
+                    // self.model.setLink(newObject,"cim:Discrete.DiscreteValues", parent);
+                    // self.model.addToActiveDiagram(newObject, []);
+                });
+
+            } else {
+                self.remoteSources(
+                    tab,
+                    subRemSrc);
+            }
+        });
+    }
+
+    self.analogs = function (tab, allAnalogs) {
+        let analogEnter = self.elements(tab, "Analog", "Analogs", allAnalogs);
+
+        analogEnter.each(function (d, i) {
+            let subAnlgVals = self.model.getTargets(
+                [d],
+                "Analog.AnalogValues");
+
+            if (subAnlgVals.length == 0) {
+                let newObject = self.model.createObject("cim:AnalogValue");
+                self.model.setLink(newObject, "cim:AnalogValue.Analog", analogEnter.data()[0]);
+                self.model.addToActiveDiagram(newObject, []);
+                self.analogValues(tab, [newObject], function (parent) {
+                });
+
+            } else {
+                self.analogValues(
+                    tab,
+                    subAnlgVals);
+            }
+        });
+
+        self.createDeleteMenu(analogEnter);
+    }
+
+    self.analogValues = function (tab, allAnalogValues, cb) {
+        let anlgValEnter = self.elements(tab, "AnalogValue", "Analog Values", allAnalogValues);
+
+        // if (cb != undefined) {
+        //     cb(anlgValEnter.data()[0]);
+        // }
+
+        anlgValEnter.each(function (d, i) {
+            let subRemSrc = self.model.getTargets(
+                [d],
+                "MeasurementValue.RemoteSource");
+
+            if (subRemSrc.length == 0) {
+                let newObject = self.model.createObject("cim:RemoteSource");
+                self.model.setLink(newObject, "cim:RemoteSource.MeasurementValue", anlgValEnter.data()[0]);
+                self.model.addToActiveDiagram(newObject, []);
+                self.remoteSources(tab, [newObject], function (parent) {
+                });
+
+            } else {
+                self.remoteSources(
+                    tab,
+                    subRemSrc);
+            }
+        });
+    }
+
+    self.remoteSources = function (tab, allRemoteSources, cb) {
+        let remoteSrcEnter = self.elements(tab, "RemoteSource", "Remote Source", allRemoteSources);
+
     }
 
     self.geoRegions = function (tab, allGeoRegions) {
