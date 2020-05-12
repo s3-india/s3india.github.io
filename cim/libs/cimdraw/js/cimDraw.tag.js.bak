@@ -47,8 +47,10 @@ function cimDrawTag(opts) {
     self.cimModel.on("setMode", function (mode) {
         if (mode === "NODE_BREAKER") {
             $("#cim-mode").text("Mode: Operational");
+            $("#tree-control-power-flow-input").css("display", "none");
         } else {
             $("#cim-mode").text("Mode: Planning");
+            $("#tree-control-power-flow-input").css("display", "initial");
         }
     });
 

@@ -12,6 +12,7 @@ function cimDiagramControlsTag(opts) {
     let copied = [];
     let xhighlight = false;
     let yhighlight = false;
+    let diagram_mode = "";
 
     // context menu for single-point objects
     let menu = [{
@@ -218,8 +219,10 @@ function cimDiagramControlsTag(opts) {
                             if (type.startsWith("Multi")) {
                                 type = type.substring("Multi".length);
                                 self.enableAddMulti(type);
+                                diagram_mode = "draw";
                             } else {
                                 self.enableAdd(type);
+                                diagram_mode = "draw";
                             }
                             break;
                         }
@@ -428,12 +431,45 @@ function cimDiagramControlsTag(opts) {
             self.enableConnect();
         });  */
 
+
+        function setCursor() {
+            if (diagram_mode == "select") {
+                d3.selectAll('.brush>.overlay').attr("cursor", "default")
+
+            } else if (diagram_mode == "pan") {
+                d3.selectAll('.brush>.overlay').attr("cursor", "default")
+
+            } else if (diagram_mode == "connect") {
+                d3.selectAll('.brush>.overlay').attr("cursor", "default")
+
+            } else if (diagram_mode == "draw") {
+                d3.selectAll('.brush>.overlay').attr("cursor", "crosshair")
+
+            } else {
+                d3.selectAll('.brush>.overlay').attr("cursor", "default")
+            }
+        }
+
+        $("#svg-wrapper").on({
+            "click": function (d) {
+                setCursor();
+            },
+            "mouseover": function (d) {
+                setCursor();
+            },
+            "mouseout": function (d) {
+                setCursor();
+            }
+        });
+
+        setCursor();
+
         $("#select").addClass("active");
         $("#pan").removeClass("active");
         $("#connect").removeClass("active");
 
         $("#select").click(function () {
-            console.log("select");
+            diagram_mode = "select";
             self.disableAll();
             self.enableDrag();
             $("#select").addClass("active");
@@ -443,7 +479,7 @@ function cimDiagramControlsTag(opts) {
         });
 
         $("#pan").click(function () {
-            console.log("pan");
+            diagram_mode = "pan";
             self.disableAll();
             self.enableZoom();
             $("#select").removeClass("active");
@@ -453,7 +489,7 @@ function cimDiagramControlsTag(opts) {
         });
 
         $("#connect").click(function () {
-            console.log("connect");
+            diagram_mode = "connect";
             self.disableAll();
             self.enableConnect();
             $("#select").removeClass("active");
@@ -1281,6 +1317,9 @@ function cimDiagramControlsTag(opts) {
 
     // draw single-segment objects
     self.enableAdd = function (e) {
+
+        $("#select").removeClass("active");
+
         let type = "";
         let text = "";
         if (typeof (e) === "object") {
@@ -1318,12 +1357,17 @@ function cimDiagramControlsTag(opts) {
                 self.parent.addToDiagram(newObject);
                 //Added by SS
                 opts.model.getHRService().insertElement(newObject);
+
+                $("#select").click();
             }
         }
     }
 
     // draw multi-segment objects
     self.enableAddMulti = function (e) {
+
+        $("#select").removeClass("active");
+
         let type = "";
         let text = "";
         let svg = d3.select("svg");
@@ -1394,27 +1438,30 @@ function cimDiagramControlsTag(opts) {
                     self.addNewPoint(newObject);
                 }
             }
+
+            $("#select").click();
         };
     }
 
     self.onSelectCIMObject = function (type) {
+
         try {
 
-            d3.select("#BusbarSection").style("border", "0px solid blue");
-            d3.select("#ACLineSegment").style("border", "0px solid blue");
-            d3.select("#Breaker").style("border", "0px solid blue");
-            d3.select("#Disconnector").style("border", "0px solid blue");
-            d3.select("#LoadBreakSwitch").style("border", "0px solid blue");
-            d3.select("#EnergySource").style("border", "0px solid blue");
-            d3.select("#SynchronousMachine").style("border", "0px solid blue");
-            d3.select("#AsynchronousMachine").style("border", "0px solid blue");
-            d3.select("#EnergyConsumer").style("border", "0px solid blue");
-            d3.select("#ConformLoad").style("border", "0px solid blue");
-            d3.select("#NonConformLoad").style("border", "0px solid blue");
-            d3.select("#LinearShuntCompensator").style("border", "0px solid blue");
-            d3.select("#NonlinearShuntCompensator").style("border", "0px solid blue");
-            d3.select("#PowerTransformer").style("border", "0px solid blue");
-            d3.select("#PowerTransformer3W").style("border", "0px solid blue");
+            d3.select("#BusbarSection").style("border", "2px solid white");
+            d3.select("#ACLineSegment").style("border", "2px solid white");
+            d3.select("#Breaker").style("border", "2px solid white");
+            d3.select("#Disconnector").style("border", "2px solid white");
+            d3.select("#LoadBreakSwitch").style("border", "2px solid white");
+            d3.select("#EnergySource").style("border", "2px solid white");
+            d3.select("#SynchronousMachine").style("border", "2px solid white");
+            d3.select("#AsynchronousMachine").style("border", "2px solid white");
+            d3.select("#EnergyConsumer").style("border", "2px solid white");
+            d3.select("#ConformLoad").style("border", "2px solid white");
+            d3.select("#NonConformLoad").style("border", "2px solid white");
+            d3.select("#LinearShuntCompensator").style("border", "2px solid white");
+            d3.select("#NonlinearShuntCompensator").style("border", "2px solid white");
+            d3.select("#PowerTransformer").style("border", "2px solid white");
+            d3.select("#PowerTransformer3W").style("border", "2px solid white");
 
             if (type != "") {
                 d3.select("#" + type).style("border", "2px solid blue");
@@ -1671,8 +1718,8 @@ function cimDiagramControlsTag(opts) {
         let node = d3.select(hoverD);
         // 'normal' elements
         node
-            .filter("g:not(.ACLineSegment)")
-            .filter("g:not(." + NODE_CLASS + ")")
+            //.filter("g:not(.ACLineSegment)")
+            //.filter("g:not(." + NODE_CLASS + ")")
             .filter("g:not(.Terminal)")
             .each(function (d) {
                 d3.select(this).append("rect")
@@ -1688,7 +1735,7 @@ function cimDiagramControlsTag(opts) {
             });
         // resizable elements (TODO: junction)
         let res = node
-            .filter("g.ACLineSegment,g." + NODE_CLASS)
+            // .filter("g.ACLineSegment,g." + NODE_CLASS)
             .selectAll("g.resize")
             .data(function (d) {
                 // data is the element plus the coordinate point seq number
@@ -2036,7 +2083,7 @@ function cimDiagramControlsTag(opts) {
         if (copied.length < 1) {
             return;
         }
-        
+
         let transform = d3.zoomTransform(d3.select("svg").node());
         let xoffset = transform.x;
         let yoffset = transform.y;
@@ -2081,11 +2128,11 @@ function cimDiagramControlsTag(opts) {
             x: 0.0,
             y: 0.0
         };
-        
+
         let elmsOldProp = [];
         let elmsNewProp = [];
         let elms = [];
-        
+
         for (let selNode of selected) {
             let dd = d3.select(selNode).data()[0];
 

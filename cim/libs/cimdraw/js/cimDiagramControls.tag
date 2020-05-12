@@ -89,7 +89,7 @@
 					<div class="drag-elements-sidepane sidepane">
 						<div>
 							<!-- <div class="dropdown-menu" id="cimElementList"> -->
-							<ul class="components-list clearfix" data-type="leftpanel" id="left-panel-container">
+							<ul class="components-list clearfix" data-type="leftpanel" id="left-panel-container" style="overflow-y:scroll;">
 								<!-- temp Code for faster development- to shift in json arrays in builder class to generate this automatically -->
 
 								<li class="header clearfix" data-section="Busses Components" data-search="">

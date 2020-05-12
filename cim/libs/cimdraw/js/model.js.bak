@@ -1476,6 +1476,31 @@ function cimModel() {
                         return true;
                     }
                 }
+                // discrete value
+                if (object.nodeName === "cim:Discrete") {
+                    if (related.nodeName === "cim:DiscreteValue") {
+                        return true;
+                    }
+                }
+                // remote source
+                if (object.nodeName === "cim:DiscreteValue") {
+                    if (related.nodeName === "cim:RemoteSource") {
+                        return true;
+                    }
+                }
+                // analog value
+                if (object.nodeName === "cim:Analog") {
+                    if (related.nodeName === "cim:AnalogValue") {
+                        return true;
+                    }
+                }
+                // remote source
+                if (object.nodeName === "cim:AnalogValue") {
+                    if (related.nodeName === "cim:RemoteSource") {
+                        return true;
+                    }
+                }
+                
 
                 return false;
             };

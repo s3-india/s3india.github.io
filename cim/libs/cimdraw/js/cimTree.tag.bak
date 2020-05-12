@@ -219,7 +219,7 @@
                 <label class="btn btn-primary btn-sm">
                     <input type="checkbox" autocomplete="off" id="showAllObjects"> Show all objects
                 </label>
-                <label class="btn btn-primary btn-sm">
+                <label class="btn btn-primary btn-sm" id="tree-control-power-flow-input" style="display:none">
                     <input type="checkbox" autocomplete="off" id="sshInput">Power flow input
                 </label>
              </div>

@@ -3,32 +3,21 @@
 function cimDiagramTag(opts) {
 
     // Switch-related defs
-    // const SWITCH_HEIGHT = 15; // height of switch elements
-    // const SWITCH_WIDTH = 15; // width of switch elements
-    const SWITCH_HEIGHT = 35; // height of switch elements
-    const SWITCH_WIDTH = 35; // width of switch elements
+    const SWITCH_HEIGHT = 15; // height of switch elements
+    const SWITCH_WIDTH = 15; // width of switch elements
     // generator-related defs
-    // const GEN_HEIGHT = 50; // height of generator elements
-    const GEN_HEIGHT = 45; // height of generator elements
+    const GEN_HEIGHT = 50; // height of generator elements
     // load-related defs
-    // const LOAD_HEIGHT = 20; // height of load elements
-    // const LOAD_WIDTH = 30; // width of load elements
-    const LOAD_HEIGHT = 30; // height of load elements
-    const LOAD_WIDTH = 45; // width of load elements
+    const LOAD_HEIGHT = 20; // height of load elements
+    const LOAD_WIDTH = 30; // width of load elements
     // compensator-related defs
-    // const COMP_HEIGHT = 20; // height of compensator elements
-    // const COMP_WIDTH = 30; // width of compensator elements
-    const COMP_HEIGHT = 30; // height of compensator elements
-    const COMP_WIDTH = 45; // width of compensator elements
+    const COMP_HEIGHT = 20; // height of compensator elements
+    const COMP_WIDTH = 30; // width of compensator elements
     // trafo-related defs
-    // const TRAFO_HEIGHT = 50; // height of transformer elements
-    // const TRAFO_RADIUS = 15;
-    const TRAFO_HEIGHT = 45; // height of transformer elements
+    const TRAFO_HEIGHT = 50; // height of transformer elements
     const TRAFO_RADIUS = 15;
     // terminal-related defs
-    // const TERMINAL_RADIUS = 2; // radius of terminals
-    // const TERMINAL_OFFSET = 1; // distance between element and its terminals
-    const TERMINAL_RADIUS = 3; // radius of terminals
+    const TERMINAL_RADIUS = 2; // radius of terminals
     const TERMINAL_OFFSET = 1; // distance between element and its terminals
 
     let self = this;
@@ -1148,7 +1137,7 @@ function cimDiagramTag(opts) {
             .attr("stroke-width", 3);
         aclineEnter.append("text")
             .attr("class", "cim-object-text")
-            .attr("font-size", 9);
+            .attr("font-size", 8);
         updateText(aclineUpdate.select("text"));
         updateText(aclineEnter.select("text"));
         aclineUpdate.select("path")
@@ -1259,14 +1248,12 @@ function cimDiagramTag(opts) {
                 }
             })
             .attr("stroke", color)
-            // .attr("stroke-width", 2);
-            .attr("stroke-width", 4);
+            .attr("stroke-width", 2);
         swEnter.append("text")
             .attr("class", "cim-object-text")
             .style("text-anchor", "end")
-            .attr("font-size", 9)
-            // .attr("x", -10)
-            .attr("x", -20)
+            .attr("font-size", 8)
+            .attr("x", -10)
             .attr("y", 0)
             .text(function (d) {
                 let name = self.model.getAttribute(d, "cim:IdentifiedObject.name");
@@ -1345,7 +1332,7 @@ function cimDiagramTag(opts) {
         genEnter.append("text")
             .attr("class", "cim-object-text")
             .style("text-anchor", "middle")
-            .attr("font-size", 9)
+            .attr("font-size", 8)
             .attr("x", 0)
             .attr("y", (GEN_HEIGHT / 2) - 60)
             .text(function (d) {
@@ -1405,7 +1392,7 @@ function cimDiagramTag(opts) {
         loadEnter.append("text")
             .attr("class", "cim-object-text")
             .style("text-anchor", "middle")
-            .attr("font-size", 9)
+            .attr("font-size", 8)
             .attr("x", 0)
             .attr("y", ly2 + 10)
             .text(function (d) {
@@ -1451,8 +1438,7 @@ function cimDiagramTag(opts) {
             })
             .attr("fill", "white")
             .attr("stroke", "black")
-            // .attr("stroke-width", 1);
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 1);
         compEnter.append("path")
             .attr("d", function (d) {
                 return line([{
@@ -1469,8 +1455,7 @@ function cimDiagramTag(opts) {
             })
             .attr("fill", "white")
             .attr("stroke", "black")
-            // .attr("stroke-width", 1);
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 1);
         compEnter.append("path")
             .attr("d", function (d) {
                 return line([{
@@ -1487,8 +1472,7 @@ function cimDiagramTag(opts) {
             })
             .attr("fill", "white")
             .attr("stroke", "black")
-            // .attr("stroke-width", 4);
-            .attr("stroke-width", 6);
+            .attr("stroke-width", 4);
         compEnter.append("path")
             .attr("d", function (d) {
                 return line([{
@@ -1505,12 +1489,11 @@ function cimDiagramTag(opts) {
             })
             .attr("fill", "white")
             .attr("stroke", "black")
-            // .attr("stroke-width", 4);
-            .attr("stroke-width", 6);
+            .attr("stroke-width", 4);
         compEnter.append("text")
             .attr("class", "cim-object-text")
             .style("text-anchor", "middle")
-            .attr("font-size", 9)
+            .attr("font-size", 8)
             .attr("x", 0)
             .attr("y", ty2 + 10)
             .text(function (d) {
@@ -1617,7 +1600,7 @@ function cimDiagramTag(opts) {
         trafoEnter.append("text")
             .attr("class", "cim-object-text")
             .style("text-anchor", "end")
-            .attr("font-size", 9)
+            .attr("font-size", 8)
             .attr("x", (TRAFO_HEIGHT / 2) * (-1))
             .attr("y", (TRAFO_HEIGHT / 2))
             .text(function (d) {
@@ -2070,7 +2053,7 @@ function cimDiagramTag(opts) {
                 return (busbarSection !== null);
             }).append("text")
             .attr("class", "cim-object-text")
-            .attr("font-size", 9);
+            .attr("font-size", 8);
         updateText(cnEnter.select("text"));
         updateText(cnUpdate.select("text"));
 

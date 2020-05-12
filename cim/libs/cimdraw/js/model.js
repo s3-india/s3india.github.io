@@ -558,6 +558,14 @@ function cimModel() {
         riot.observable(this);
     }
 
+    /**
+     * @name undoMgr
+     * @memberof module:svgcanvas.SvgCanvas#
+     * @type {module:history.HistoryEventHandler}
+     */
+    let mapUndoMgr = {};
+    let mapHRService = {};
+
     // This is the fundamental object used by CIMDraw to manipulate CIM files.
     let model = {
         // The name of the CIM file which is actually loaded.
@@ -567,11 +575,11 @@ function cimModel() {
         schema: new cimSchema(),
 
         getUndoMgr() {
-            return undoMgr;
+            return mapUndoMgr[model.activeDiagramName];
         },
 
         getHRService() {
-            return hrService;
+            return mapHRService[model.activeDiagramName];
         },
         // Loads a CIM file from the local filesystem. If reader is null, then
         // it creates a new empty file. Returns a promise which resolves after
@@ -1025,9 +1033,8 @@ function cimModel() {
                     return model.getAttribute(el, "cim:IdentifiedObject.name");
                 })
                 .map(el => el.textContent);
-            if(diagrams.length == 0)
-            {
-                diagrams.push("hello");
+            if (diagrams.length == 0) {
+                diagrams.push("Diagram1");
             }
             return diagrams;
         },
@@ -1500,7 +1507,7 @@ function cimModel() {
                         return true;
                     }
                 }
-                
+
 
                 return false;
             };
@@ -1846,6 +1853,57 @@ function cimModel() {
             model.trigger("setMode", mode);
         },
 
+        registerUndoService() {
+
+            if (!mapUndoMgr.hasOwnProperty(model.activeDiagramName)) {
+                mapUndoMgr[model.activeDiagramName] = new UndoManager({
+                    /**
+                     * @param {string} eventType One of the HistoryEvent types
+                     * @param {module:history.HistoryCommand} cmd Fulfills the HistoryCommand interface
+                     * @fires module:svgcanvas.SvgCanvas#event:changed
+                     * @returns {void}
+                     */
+                    handleHistoryEvent(eventType, cmd) {
+                        const EventTypes = HistoryEventTypes;
+
+                        if (eventType === EventTypes.BEFORE_UNAPPLY || eventType === EventTypes.BEFORE_APPLY) {
+
+
+                        } else if (eventType === EventTypes.AFTER_APPLY || eventType === EventTypes.AFTER_UNAPPLY) {
+
+                            const cmdType = cmd.type();
+                            const isApply = (eventType === EventTypes.AFTER_APPLY);
+                            if (cmdType === MoveElementCommand.type()) {
+
+                            } else if (cmdType === InsertElementCommand.type() ||
+                                cmdType === RemoveElementCommand.type()) {
+
+                                if (cmdType === InsertElementCommand.type()) {
+                                    if (isApply) {
+
+                                    }
+                                } else if (!isApply) {
+
+                                }
+
+                            } else if (cmdType === ChangeElementCommand.type()) {
+
+
+                                const values = isApply ? cmd.newValues : cmd.oldValues;
+
+
+
+                            }
+                        }
+                    }
+                });
+            }
+
+            if (!mapHRService.hasOwnProperty(model.activeDiagramName)) {
+                mapHRService[model.activeDiagramName] = new HistoryRecordingService(model, mapUndoMgr[model.activeDiagramName]);
+            }
+        },
+
         // Reset the model to its initial state.
         clear() {
             data.all = null;
@@ -1855,56 +1913,8 @@ function cimModel() {
             dataMap = new Map();
             linksMap = new Map();
         }
+
     };
-
-    /**
-     * @name undoMgr
-     * @memberof module:svgcanvas.SvgCanvas#
-     * @type {module:history.HistoryEventHandler}
-     */
-    let undoMgr = new UndoManager({
-        /**
-         * @param {string} eventType One of the HistoryEvent types
-         * @param {module:history.HistoryCommand} cmd Fulfills the HistoryCommand interface
-         * @fires module:svgcanvas.SvgCanvas#event:changed
-         * @returns {void}
-         */
-        handleHistoryEvent(eventType, cmd) {
-            const EventTypes = HistoryEventTypes;
-
-            if (eventType === EventTypes.BEFORE_UNAPPLY || eventType === EventTypes.BEFORE_APPLY) {
-
-
-            } else if (eventType === EventTypes.AFTER_APPLY || eventType === EventTypes.AFTER_UNAPPLY) {
-
-                const cmdType = cmd.type();
-                const isApply = (eventType === EventTypes.AFTER_APPLY);
-                if (cmdType === MoveElementCommand.type()) {
-
-                } else if (cmdType === InsertElementCommand.type() ||
-                    cmdType === RemoveElementCommand.type()) {
-
-                    if (cmdType === InsertElementCommand.type()) {
-                        if (isApply) {
-
-                        }
-                    } else if (!isApply) {
-
-                    }
-
-                } else if (cmdType === ChangeElementCommand.type()) {
-
-
-                    const values = isApply ? cmd.newValues : cmd.oldValues;
-
-
-
-                }
-            }
-        }
-    });
-
-    let hrService = new HistoryRecordingService(model, undoMgr);
 
     riot.observable(model);
 

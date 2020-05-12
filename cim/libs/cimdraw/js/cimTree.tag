@@ -33,7 +33,7 @@
      }
 
      .tab-content {
-         overflow: scroll;
+         /*overflow: scroll;*/
      }
 
      .cim-tree-attribute-name {
@@ -207,7 +207,7 @@
         </div>
     </div>    -->
     <div  class="app-tree"  id="app-tree">
-        <div class="tree component-properties" id="right-panel">
+        <div class="tree component-properties" id="right-panel" style="overflow-y:scroll">
             <div class="card bg-light mb-3 d-none" id="tree-link-dialog">
                 <div class="card-body">
                     <h5 class="card-title">Choose the target element</h5>

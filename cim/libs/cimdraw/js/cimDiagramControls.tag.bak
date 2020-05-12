@@ -75,7 +75,7 @@
         </div>
     </div>  -->
 
-    	<div id="left-panel" style="border-right: 5px #3C7D91 double;>
+    	<div id="left-panel" style="/*border-right: 5px #3C7D91 double;*/">
         
 			<div id="cimElement" class="drag-elements">
 				<div class="header">
