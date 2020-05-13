@@ -1433,13 +1433,15 @@ function cimDiagramControlsTag(opts) {
                         d3.select("svg > path").datum(null);
                         // disable ourselves
                         svg.on("contextmenu.add", null);
+
+                        $("#select").click();
                     });
                 } else {
                     self.addNewPoint(newObject);
                 }
             }
 
-            $("#select").click();
+            //$("#select").click();
         };
     }
 
