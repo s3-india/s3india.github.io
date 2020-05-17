@@ -2260,7 +2260,7 @@ function cimDiagramControlsTag(opts) {
         // Prevent the default refresh event under WINDOWS system
         event.preventDefault();
         //alert('you pressed F5!');
-        var root = location.protocol + '//' + location.host;
+        var root = location.protocol + '//' + location.host + location.pathname;
         window.loacation.href = root;
     });
 
@@ -2268,7 +2268,7 @@ function cimDiagramControlsTag(opts) {
     // Mac OS system defines `command + r` as a refresh shortcut
     hotkeys('ctrl+r, command+r', function () {
         // alert('stopped reload!');
-        var root = location.protocol + '//' + location.host;
+        var root = location.protocol + '//' + location.host + location.pathname;
         window.loacation.href = root;
         //return false;
     });
