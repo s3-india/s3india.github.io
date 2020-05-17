@@ -2261,7 +2261,7 @@ function cimDiagramControlsTag(opts) {
         event.preventDefault();
         //alert('you pressed F5!');
         var root = location.protocol + '//' + location.host + location.pathname;
-        window.loacation.href = root;
+        window.location.href = root;
     });
 
     // Returning false stops the event and prevents default browser events
@@ -2269,7 +2269,7 @@ function cimDiagramControlsTag(opts) {
     hotkeys('ctrl+r, command+r', function () {
         // alert('stopped reload!');
         var root = location.protocol + '//' + location.host + location.pathname;
-        window.loacation.href = root;
+        window.location.href = root;
         //return false;
     });
 
