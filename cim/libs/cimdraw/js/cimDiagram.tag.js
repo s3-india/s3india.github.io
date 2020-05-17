@@ -853,7 +853,7 @@ function cimDiagramTag(opts) {
             .attr("fill", "none")
             .attr("stroke", "black")
             //.attr("stroke-width", 1);
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 3);
         self.trigger("createEdges", edgesEnter);
     }
 
@@ -1145,7 +1145,7 @@ function cimDiagramTag(opts) {
             .attr("fill", "none")
             .attr("stroke", "darkred")
             //.attr("stroke-width", 2);
-            .attr("stroke-width", 3);
+            .attr("stroke-width", 5);
         aclineEnter.append("text")
             .attr("class", "cim-object-text")
             .attr("font-size", 9);
@@ -1165,7 +1165,7 @@ function cimDiagramTag(opts) {
             .attr("fill", "none")
             .attr("stroke", "darkred")
             //.attr("stroke-width", 2);
-            .attr("stroke-width", 3);
+            .attr("stroke-width", 5);
 
         function updateText(selection) {
             selection.attr("x", function (d) {
@@ -1863,7 +1863,8 @@ function cimDiagramTag(opts) {
             d3.select(this).append("circle")
                 .attr("cx", term.attr("cx"))
                 .attr("cy", term.attr("cy"))
-                .attr("r", 6)
+                // .attr("r", 6)
+                .attr("r", 9)
                 .attr("stroke-width", 0)
                 .attr("fill", "steelblue")
                 .attr("fill-opacity", "0.0")
@@ -2060,7 +2061,7 @@ function cimDiagramTag(opts) {
             })
             .attr("stroke", "black")
             //.attr("stroke-width", 2);
-            .attr("stroke-width", 3)
+            .attr("stroke-width", 5)
             .attr("fill", "none");
 
         // for busbars, show the name

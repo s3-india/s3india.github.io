@@ -142,6 +142,32 @@
                 </div>
             </div>
         </div> 
+
+        <div class="modal fade" id="cimFileSaveModel" tabindex="-1" role="dialog" aria-labelledby="cimFileSaveModelLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cimFileSaveModelLabel">Enter File Name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row justify-content-center">
+                            <div class="col-md-auto">         
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                        <input type="text" name="filename" id="cimFileName" style="width: 250px;"> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="cim-save-file-modal">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div> 
+
+
     </div>
 
      <script>cimDrawTag.call(this, this.opts);</script>

@@ -129,7 +129,7 @@
                                         <input type="radio" name="options" id="operational" autocomplete="off" checked> Operational
                                     </label>
                                     <label class="btn btn-primary">
-                                        <input type="radio" name="options" id="planning" autocomplete="off"> Planning
+                                        <input type="radio" name="options" id="planning" autocomplete="off"> Study
                                     </label>
                                 </div>
                             </div>

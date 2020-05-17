@@ -257,6 +257,10 @@ function cimDrawTag(opts) {
         function loadDiagram(file, name, element) {
             self.cimModel.loadRemote("/" + file).then(function () {
                 showDiagram();
+
+                //Added by Satyam Singh
+                self.cimModel.registerUndoService();
+                
             }).catch(function (e) {
                 $("#loadingDiagramMsg").append("<br>" + e);
                 $("#cim-loading-modal-error-container").show();

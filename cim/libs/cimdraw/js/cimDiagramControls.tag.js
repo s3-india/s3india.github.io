@@ -702,6 +702,8 @@ function cimDiagramControlsTag(opts) {
                 // handle escape key
                 if (d3.event.keyCode === 27) { // "Escape"
                     d3.contextMenu("close");
+                    //Added by SS
+                    self.deselectAll();
                 }
             });
     });
@@ -920,7 +922,7 @@ function cimDiagramControlsTag(opts) {
                     return d3.selectAll(selected).data().indexOf(d.source) > -1 || terminals.indexOf(d.target) > -1;
                 });
                 // links.select("path").attr("stroke", "black").attr("stroke-width", "1");
-                links.select("path").attr("stroke", "black").attr("stroke-width", "2");
+                links.select("path").attr("stroke", "black").attr("stroke-width", "3");
                 self.highlight("x", null);
                 self.highlight("y", null);
 
@@ -1420,7 +1422,8 @@ function cimDiagramControlsTag(opts) {
                     newObject.rotation = 0;
                     self.addDrawing(newObject, function () {
                         d3.event.preventDefault();
-                        self.addNewPoint(newObject);
+
+                        //self.addNewPoint(newObject);
                         opts.model.addToActiveDiagram(newObject, newObject.lineData);
 
                         //Added by SS
@@ -1730,7 +1733,8 @@ function cimDiagramControlsTag(opts) {
                     .attr("width", this.getBBox().width)
                     .attr("height", this.getBBox().height)
                     .attr("stroke", "black")
-                    .attr("stroke-width", 2)
+                    //.attr("stroke-width", 2)
+                    .attr("stroke-width", 3)
                     .attr("stroke-dasharray", "5,5")
                     .attr("fill", "none")
                     .attr("class", "selection-rect");
@@ -2255,14 +2259,18 @@ function cimDiagramControlsTag(opts) {
     hotkeys('f5', function (event, handler) {
         // Prevent the default refresh event under WINDOWS system
         event.preventDefault();
-        alert('you pressed F5!');
+        //alert('you pressed F5!');
+        var root = location.protocol + '//' + location.host;
+        window.loacation.href = root;
     });
 
     // Returning false stops the event and prevents default browser events
     // Mac OS system defines `command + r` as a refresh shortcut
     hotkeys('ctrl+r, command+r', function () {
-        alert('stopped reload!');
-        return false;
+        // alert('stopped reload!');
+        var root = location.protocol + '//' + location.host;
+        window.loacation.href = root;
+        //return false;
     });
 
     // Single key
@@ -2270,9 +2278,9 @@ function cimDiagramControlsTag(opts) {
         //event.srcElement: input 
         //event.target: input
         if (event.target === "input") {
-            alert('you pressed a!')
+            // alert('you pressed a!')
         }
-        alert('you pressed a!')
+        //   alert('you pressed a!')
     });
 
 
@@ -2387,6 +2395,44 @@ function cimDiagramControlsTag(opts) {
             case modKey + 'a': {
                 console.log(handler.key);
                 self.selectAll();
+                break;
+            }
+        }
+    });
+
+    let normalKeys = 'del,s,p,c';
+
+    hotkeys(normalKeys, {
+        keyup: true
+    }, function (event, handler) {
+        event.preventDefault();
+        console.log(event.type);
+        if (event.type == "keydown") {
+            return;
+        }
+
+        switch (handler.key) {
+            case 'del': {
+                console.log(handler.key);
+                if (selected.length > 0) {
+                    self.deleteObject(selected[0]);
+                }
+                break;
+            }
+            case 's': {
+                console.log(handler.key);
+                $("#select").click();
+                break;
+            }
+            case 'p': {
+                console.log(handler.key);
+                $("#pan").click();
+                break;
+            }
+            case 'c': {
+                console.log(handler.key);
+                $("#connect").click();
+
                 break;
             }
         }
