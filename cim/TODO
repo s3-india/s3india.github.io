@@ -30,3 +30,28 @@ CIM editor
 
 - On Click or View in Right Tree Option against a cim object, it should be selected(elem prop open) in Right tree Panel and scroll to View. 
 - Resize Left and  Right Pane on Mouse Drag. 
+
+
+Please change the app-title to CIM-Editor. Done
+Scroll bar (vertical) on left-pane not working properly. Done (Removed Right Border from left pane due to which scroll bar was partially visible)
+Add provision to collapse all elements on right-pane. (Working on it)
+Rename "planning" as "study". Done
+"Power flow input" button should only be enabled, when we choose "study mode". Done
+What happens to values entered under study mode? Are they saved in CIM file? Yes it is saved similar to Operational. 
+But The file does not store information whether it operational or study mode. As of now it treats the file as oeprational mode only.
+Keyboard shortcuts don't work. Are they implemented? Not Implemented. (Working on it)
+Right-pane scroll bar not working properly when combo-box is expanded. It is working. In which case it is not working.
+Not all entries of combo-box list are visible, and no scroll-bar is visible to scroll to non-visible items. In which case it is not working.
+
+
+Add option for diagram list
+
+9/5/2020 (by DB Sir)
+The default size of breaker / disconnecter are way smaller than other components such as Rotating Machines, Energy Source etc. I would suggest to increase the size of the "Switches" and also try to keep default size of all same / similar.
+The drawing is still cumbersome. Especially selection and Deletion. Can we not make Delete key work to delete currently selected element? I'm unable to select and move AC Line Segment or Nodes easily
+The toolbar that displays undo-redo etc. can be improved to provide a more visual feedback. It would be good to show which option is selected (Select hand Tool, Pan Tool etc.)
+Lines and Nodes do not provide selection feedback as do other objects. It is very hard to determine if line has been selected or not
+Can we use keyboard shortcuts for panning de-selection etc.?
+Drawing of line / node is not user friendly. Is it possible that when right btn is clicked, the current segment is removed and till one last is kept. Currently, the right mouse point is treated as a point and line is terminated at the last point.
+It would be much easier if we shift to selection mode after drawing an object, just like PED.
+It would be much nicer to have normal arrow cursor for selection

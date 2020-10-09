@@ -8,6 +8,10 @@ function cimDrawTag(opts) {
     let bNewFile = false;
     let cimFileReader = {};
 
+    //Added by Vaibhav Bansal on 18-06-2020
+    let cimFileOrigin = ""; //Variable to denote whether the file is opened from server or local File
+    //
+
     self.cimModel = cimModel();
 
     let diagramsToLoad = 2;
@@ -37,6 +41,10 @@ function cimDrawTag(opts) {
 
         } else {
 
+            //Added by Vaibhav Bansal on 18-06-2020
+            cimFileOrigin = "Local File -";
+            //
+
             for (let i = 0; i < this.files.length; i++) {
                 cimFile = this.files[0];
                 cimFileReader = new FileReader();
@@ -51,6 +59,70 @@ function cimDrawTag(opts) {
                 break;
             }
         }
+    }
+
+    //Added by Vaibhav Bansal on 08-06-2020
+    const fileSelectFromServer = document.getElementById('fileSelectFromServer');
+
+    fileSelectFromServer.addEventListener("click", function () {
+
+        loadFileFromServer();
+    });
+    
+
+    function loadFileFromServer()
+    {
+        let strURL = window.location.origin + "/cim/openRDFFile";
+        cimFileOrigin = "Server File -";
+
+        fetch(strURL).then(async (response) => {
+
+            if (response.status != 200) {
+                //something went wrong or file not present on server
+
+                $("#mesage_dialog_text").text("Error Occurred! Failed to get the File From Server");
+
+                $("#mesage_dialog").modal("show");
+                setTimeout(function () {
+                    $("#mesage_dialog").modal("hide");
+                }, 1500)
+
+                return;
+            }
+
+            let objBlobData = await response.blob(); //working code
+
+            // let strFilePath = "C:\\Downloads\\CIM_Model.xml";
+
+            // let objFile = fs.createWriteStream(strFilePath);
+            // response.body.pipe(objFile);
+
+            // let blob = new Blob([response], { type: "application/xml" });
+
+            // let link = document.createElement("a");
+            // link.href = window.URL.createObjectURL(objBlobData);
+
+            // let strFile = "CIM_Model.xml";
+            // link.download = strFile;
+
+            // document.body.appendChild(link);
+
+            // //onClick property 
+            // link.click();
+
+            // document.body.removeChild(link);
+
+            cimFile = objBlobData;
+            cimFile.name = "CIM_Model";
+            cimFileReader = new FileReader();
+            $("#cim-load").attr("href", "#" + encodeURI(cimFile.name) + "/diagrams");
+            //$("#cim-load").click();
+            self.cimModel.clear();
+            self.update();
+            self.trigger("cleanUp")
+
+            document.getElementById('cim-load').click();
+        });
     }
 
     self.cimModel.on("setMode", function (mode) {
@@ -177,6 +249,11 @@ function cimDrawTag(opts) {
             d3.select("#cim-diagrams").selectAll("option").remove();
             d3.select("#cim-diagrams").append("option").attr("disabled", "disabled").html("Select a diagram");
             d3.select("#cim-filename").html("");
+
+            //Added by Vaibhav Bansal on 18-06-2020
+            d3.select('#cim-fileOrigin').html("");
+            //
+
             $(".selectpicker").selectpicker("refresh");
             // initialize the fileinput component
             // $("#cim-file-input").fileinput({
@@ -218,6 +295,11 @@ function cimDrawTag(opts) {
             $("#loadingModal").on("shown.bs.modal", function (e) {
                 if (typeof (cimFile.name) !== "undefined") {
                     d3.select("#cim-filename").html("[" + cimFile.name + "]&nbsp&nbsp");
+
+                    //Added by Vaibhav Bansal on 18-06-2020
+                    d3.select("#cim-fileOrigin").html(cimFileOrigin);
+                    //
+
                     self.cimModel.load(cimFile, cimFileReader).then(function () {
                         loadDiagramList(cimFile.name);
                         $("#loadingModal").modal("hide");
@@ -359,6 +441,44 @@ function cimDrawTag(opts) {
                     $("#cim-save").attr("href", objectURL);
                 }
             });
+
+
+            //Added by Vaibhav Bansal on 08-06-2020
+            $("#cim-save-server").off("click");
+            $("#cim-save-server").on("click", function () {
+                let out = self.cimModel.save();
+
+                //contruct the blob object- use this blob object to send it to server
+                let blob = new Blob([out], {
+                    type: "text/xml"
+                });
+
+                let objFormData = new FormData();
+                objFormData.append('file_data', blob);
+
+                let strURL = window.location.origin + "/cim/uploadRDFFile";
+                fetch(strURL,
+                    {
+                        method: 'post',
+                        body: objFormData //send the blob data in body
+                    }
+                ).then((response) => {
+                    if (response.status != 200) {
+                        $("#mesage_dialog_text").text("Error Occurred! File Failed to Save on Server");
+                    }
+                    else {
+                        $("#mesage_dialog_text").text("File Saved Successfully on Server!");
+                    }
+
+                    $("#mesage_dialog").modal("show");
+                    setTimeout(function () {
+                        $("#mesage_dialog").modal("hide");
+                    }, 1500)
+                })
+            })
+            //
+
+
             $("#cgmes-save").off("click");
             // allow saving a copy of the file as CGMES
             $("#cgmes-save").on("click", cgmesSave);
@@ -418,20 +538,25 @@ function cimDrawTag(opts) {
 
         route("/*/createNew", function (file) {
             //todo.. remove this when Operation/Planning mode gets active...
-            window.history.back();
+            //window.history.back();  //Commented by Vaibhav Bansal on 11-06-2020
 
+            $("#newDiagramName").val(''); //Added by Vaibhav Bansal on 11-06-2020
             $("#newDiagramModal").modal("show");
+
             d3.select("#newDiagramBtn").on("click", function () {
                 let diagramName = d3.select("#newDiagramName").node().value;
                 let hashComponents = window.location.hash.substring(1).split("/");
                 let basePath = hashComponents[0] + "/diagrams/";
                 let fullPath = basePath + diagramName;
                 $('#newDiagramModal').modal("hide");
+
                 route(fullPath);
             });
         });
 
         // start router
         route.start(true);
+
+        document.getElementById('fileSelectFromServer').click(); //fire this event after mounting
     });
 }

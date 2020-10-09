@@ -592,7 +592,7 @@ function cimModel() {
             // should we create a new empty file?
             if (reader === null) {
                 let parser = new DOMParser();
-                data.all = parser.parseFromString(emptyFile, "application/xml");
+                data.all = parser.parseFromString(emptyFile, "application/xml"); //parse the XML From String into a DOM Object(xml document)
                 model.fileName = file.name;
                 return buildModel();
             }
@@ -1075,7 +1075,12 @@ function cimModel() {
             for (let type of types) {
                 ret[type] = [];
             }
+
+            /**/
             ret = [...allObjectsSet].reduce(function (r, v) {
+
+                /*Here NodeName returns the name of the tag if node is an element Node*/
+
                 if (typeof (r[v.nodeName]) !== "undefined") {
                     r[v.nodeName].push(v);
                 }
@@ -1508,6 +1513,12 @@ function cimModel() {
                     }
                 }
 
+                //Added by Vaibhav bansal on 07-10-2020
+                if(object.nodeName === "cim:PerLengthPhaseImpedance"){
+                    if(related.nodeName === "cim:PhaseImpedanceData"){
+                        return true;
+                    }
+                }
 
                 return false;
             };

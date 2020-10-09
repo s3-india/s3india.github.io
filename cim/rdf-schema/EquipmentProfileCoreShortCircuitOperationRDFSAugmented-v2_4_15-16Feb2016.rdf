@@ -4894,6 +4894,29 @@ The BaseVoltage at the two ends of ACLineSegments in a Line shall have the same 
         <rdfs:comment  rdf:parseType="Literal">Zero sequence shunt (charging) susceptance, uniformly distributed, of the entire line section.</rdfs:comment>
         <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
     </rdf:Description>
+    <!--Added by Vaibhav Bansal on 05-10-2020-->
+    <rdf:Description rdf:about="#ACLineSegment.PerLengthImpedance">
+        <rdfs:label xml:lang="en">PerLengthImpedance</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal"></rdfs:comment>
+        <rdfs:domain rdf:resource="#ACLineSegment"/>
+        <rdfs:range rdf:resource="#PerLengthImpedance"/>
+        <cims:inverseRoleName rdf:resource="#PerLengthImpedance.ACLineSegment"/>
+        <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:0..1"/>
+        <cims:AssociationUsed>Yes</cims:AssociationUsed>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PerLengthImpedance.ACLineSegment">
+        <rdfs:label xml:lang="en">ACLineSegment</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal"></rdfs:comment>
+        <rdfs:domain rdf:resource="#PerLengthImpedance"/>
+        <rdfs:range rdf:resource="#ACLineSegment"/>
+        <cims:inverseRoleName rdf:resource="#ACLineSegment.PerLengthImpedance"/>
+        <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:0..n"/>
+        <cims:AssociationUsed>No</cims:AssociationUsed>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    </rdf:Description>
+    <!---->
+
     <rdf:Description rdf:about="#Susceptance">
         <rdfs:label xml:lang="en">Susceptance</rdfs:label>
         <rdfs:comment  rdf:parseType="Literal">Imaginary part of admittance.</rdfs:comment>
@@ -5069,6 +5092,129 @@ The BaseVoltage at the two ends of ACLineSegments in a Line shall have the same 
         <rdfs:comment  rdf:parseType="Literal">Zero sequence series reactance of the entire line section.</rdfs:comment>
         <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
     </rdf:Description>
+
+
+    <!--Added by Vaibhav Bansal on 30-09-2020 : Added the PerLengthImpedance For AC LineSegment-->
+    <rdf:Description rdf:about="#PerLengthImpedance">
+        <rdfs:label xml:lang="en">PerLengthImpedance</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#IdentifiedObject"/>
+        <rdfs:comment  rdf:parseType="Literal">Common type for per-length impedance electrical catalogues. </rdfs:comment>
+        <cims:belongsToCategory rdf:resource="#Package_Core"/>
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#concrete"/>
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PerLengthPhaseImpedance">
+        <rdfs:label xml:lang="en">PerLengthPhaseImpedance</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#PerLengthImpedance"/>
+        <rdfs:comment  rdf:parseType="Literal">Impedance and admittance parameters per unit length for n-wire unbalanced lines, in matrix form. </rdfs:comment>
+        <cims:belongsToCategory rdf:resource="#Package_Core"/>
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#concrete"/>
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PerLengthPhaseImpedance.conductorCount">
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+        <rdfs:label xml:lang="en">conductorCount</rdfs:label>
+        <rdfs:domain rdf:resource="#PerLengthPhaseImpedance"/>
+        <rdfs:range rdf:resource="#ConductorCount"/>
+        <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:0..1" />
+        <rdfs:comment  rdf:parseType="Literal">Number of phase, neutral, and other wires retained. Constrains the number of matrix elements and the phase codes that can be used with this matrix.</rdfs:comment>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#ConductorCount">
+        <rdfs:label xml:lang="en">ConductorCount</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Number of phase, neutral, and other wires retained. Constrains the number of matrix elements and the phase codes that can be used with this matrix.</rdfs:comment>
+        <cims:belongsToCategory rdf:resource="#Package_Core"/>
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#enumeration"/>
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#ConductorCount.1">
+        <rdfs:label xml:lang="en">1</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Number of Phase : 1</rdfs:comment>
+        <rdf:type rdf:resource="#ConductorCount"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#ConductorCount.2">
+        <rdfs:label xml:lang="en">2</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Number of Phase : 2</rdfs:comment>
+        <rdf:type rdf:resource="#ConductorCount"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#ConductorCount.3">
+        <rdfs:label xml:lang="en">3</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Number of Phase : 3</rdfs:comment>
+        <rdf:type rdf:resource="#ConductorCount"/>
+    </rdf:Description>
+     <rdf:Description rdf:about="#ConductorCount.4">
+        <rdfs:label xml:lang="en">4</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Number of Phase : 4</rdfs:comment>
+        <rdf:type rdf:resource="#ConductorCount"/>
+    </rdf:Description>
+    <!--Here Phase Impedance data is not the SubClass of Identified Object-->
+    <rdf:Description rdf:about="#PhaseImpedanceData">
+        <rdfs:label xml:lang="en">PhaseImpedanceData</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">A collection of equipment for purposes other than generation or utilization, through which electric energy in bulk is passed for the purposes of switching or modifying its characteristics. </rdfs:comment>
+        <cims:belongsToCategory rdf:resource="#Package_Core"/>
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#concrete"/>
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PhaseImpedanceData.PerLengthPhaseImpedance">
+        <rdfs:label xml:lang="en">PerLengthPhaseImpedance</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Conductor phase impedance to which this data belongs.All data that belong to this conductor phase impedance.</rdfs:comment>
+        <rdfs:domain rdf:resource="#PhaseImpedanceData"/>
+        <rdfs:range rdf:resource="#PerLengthPhaseImpedance"/>
+        <cims:inverseRoleName rdf:resource="#PerLengthPhaseImpedance.PhaseImpedanceData"/>
+        <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1"/>
+        <cims:AssociationUsed>Yes</cims:AssociationUsed>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PerLengthPhaseImpedance.PhaseImpedanceData">
+        <rdfs:label xml:lang="en">PhaseImpedanceData</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">All Phase Impedance Data within this PerLengthPhaseImpedance</rdfs:comment>
+        <rdfs:domain rdf:resource="#PerLengthPhaseImpedance"/>
+        <rdfs:range rdf:resource="#PhaseImpedanceData"/>
+        <cims:inverseRoleName rdf:resource="#PhaseImpedanceData.PerLengthPhaseImpedance"/>
+        <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:0..n"/>
+        <cims:AssociationUsed>No</cims:AssociationUsed>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PhaseImpedanceData.b">
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+        <rdfs:label xml:lang="en">b</rdfs:label>
+        <rdfs:domain rdf:resource="#PhaseImpedanceData"/>
+        <cims:dataType rdf:resource="#Integer"/>
+        <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1..1" />
+        <rdfs:comment  rdf:parseType="Literal"></rdfs:comment>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PhaseImpedanceData.r">
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+        <rdfs:label xml:lang="en">r</rdfs:label>
+        <rdfs:domain rdf:resource="#PhaseImpedanceData"/>
+        <cims:dataType rdf:resource="#Integer"/>
+        <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1..1" />
+        <rdfs:comment  rdf:parseType="Literal"></rdfs:comment>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PhaseImpedanceData.x">
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+        <rdfs:label xml:lang="en">x</rdfs:label>
+        <rdfs:domain rdf:resource="#PhaseImpedanceData"/>
+        <cims:dataType rdf:resource="#Integer"/>
+        <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1..1" />
+        <rdfs:comment  rdf:parseType="Literal"></rdfs:comment>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PhaseImpedanceData.sequenceNumber">
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+        <rdfs:label xml:lang="en">sequenceNumber</rdfs:label>
+        <rdfs:domain rdf:resource="#PhaseImpedanceData"/>
+        <cims:dataType rdf:resource="#Integer"/>
+        <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1..1" />
+        <rdfs:comment  rdf:parseType="Literal"></rdfs:comment>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    </rdf:Description>
+    <!---->
+
+
+
     <rdf:Description rdf:about="#AsynchronousMachine">
         <rdfs:label xml:lang="en">AsynchronousMachine</rdfs:label>
         <rdfs:subClassOf rdf:resource="#RotatingMachine"/>

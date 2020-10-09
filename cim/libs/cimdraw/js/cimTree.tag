@@ -206,6 +206,7 @@
             
         </div>
     </div>    -->
+    
     <div  class="app-tree"  id="app-tree">
         <div class="tree component-properties" id="right-panel" style="overflow-y:scroll">
             <div class="card bg-light mb-3 d-none" id="tree-link-dialog">

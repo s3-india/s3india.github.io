@@ -347,11 +347,18 @@ function cimDiagramTag(opts) {
         }
 
         function handleTerminals(selection) {
-            let terminals = self.model.getTerminals([object]);
+
+            /*
+                to get the list of terminals for the given object (eg: Breaker) Passed as an argument.
+                For Breaker we get two terminal objects.
+            */
+            let terminals = self.model.getTerminals([object]); 
             for (let terminal of terminals) {
                 let cn = self.model.getTargets(
                     [terminal],
                     TERM_NODE)[0];
+
+                //if cn is undefined means there is no connectivity node or Topological Node for the given list of terminals
                 if (typeof (cn) !== "undefined") {
                     let equipments = self.model.getEquipments(cn);
                     // let's try to get a busbar section
@@ -1207,6 +1214,8 @@ function cimDiagramTag(opts) {
     }
 
     self.drawSwitches = function (allSwitches, type, color) {
+
+        //This function is an accessor fucntion which returns the x, y cordinates from our data
         let line = d3.line()
             .x(function (d) {
                 return d.x;

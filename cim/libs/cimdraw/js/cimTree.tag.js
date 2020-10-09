@@ -219,6 +219,33 @@ function cimTreeTag(opts) {
                 let regionG = cimContainers.selectAll("ul#" + regionUUID);
                 self.subGeoRegions(regionG, [object]);
                 break;
+
+            /* Added by Vaibhav Bansal on 30-09-2020- add the new object PerLengthPhaseImpedance 
+             * Object under CIM Containers section.
+             */
+            case "cim:PerLengthPhaseImpedance":
+                self.perLengthPhaseImpedances(cimContainers, [object]);
+                break;
+
+            /* Added by Vaibhav bansal on 30-09-2020
+             * First Find the PerLengthPhaseImpedance For which we have to add Phase Impedance data under it.
+             * 1. using getTargets function (argument1 -> PhaseImpedanceData Object, argument2-> LinkName), we get
+             *    all the PerLengthPhaseImpedance Objects (generally only one as PhaseImpedanceData Object contains 
+             *    only one PerLengthPhaseImpedance Object)
+             * 
+             * 2. get the rdf:ID attribute's value of PerLengthPhaseImpedance Object
+             * 
+             * 3. Select the particular section(ul) to which the rdf:ID belongs
+             * 
+             * 4. Create the PhaseImpedanceData objects under that particular ul section instead of separate section 
+             */
+            case "cim:PhaseImpedanceData":
+                let perLengthPhaseImpedance = self.model.getTargets([object], "PhaseImpedanceData.PerLengthPhaseImpedance");
+                let perLengthPhaseImpedanceUUID = perLengthPhaseImpedance[0].attributes.getNamedItem("rdf:ID").value;
+                let perLengthPhaseImpedanceSection = cimContainers.selectAll("ul#" + perLengthPhaseImpedanceUUID);
+                self.phaseImpedanceData(perLengthPhaseImpedanceSection, [object]);
+                break;
+
             case "cim:Substation":
                 self.substations(cimContainers, [object]);
                 break;
@@ -258,8 +285,8 @@ function cimTreeTag(opts) {
             case "cim:Analog":
                 // let analogEnter = self.elements(cimMeasurements, "Analog", "Analogs", [object]);
                 // self.createDeleteMenu(analogEnter);
-                 //Added by SS
-                 self.analogs(cimMeasurements, [object]);
+                //Added by SS
+                self.analogs(cimMeasurements, [object]);
                 break;
             case "cim:Discrete":
                 // let discEnter = self.elements(cimMeasurements, "Discrete", "Discretes", [object]);
@@ -321,8 +348,86 @@ function cimTreeTag(opts) {
                 btn.html(value);
             }
             $("[cim-target=\"" + object.attributes.getNamedItem("rdf:ID").value + "\"]").html(value);
+
+            changeDependentNameAttributeValue(object, type, value);
         }
+
+        /* Added by Vaibhav Bansal on 05-10-2020 
+         * Object like PhaseImpedanceData, Position etc that are not derived from IdentifiedObject
+         * So for these types of objects IndentifiedObject.name property doesn't exists. So we pass 
+         * attrName as empty and distinguish on the basis of the object type
+         * As of Now, Object that are derived from owl:Thing class, their names are not stored in 
+         * XML File. If in future it happens, then code has to be changed. 
+         */
+        else if (attrName == "") {
+            if (object.localName == "PhaseImpedanceData") {
+
+                let target = d3.select("div.tree")
+                    .selectAll("ul#" + object.attributes.getNamedItem("rdf:ID").value);
+                if (target.empty() === false) {
+                    let btn = d3.select(target.node().parentNode).select("button");
+                    btn.html(value);
+                }
+                $("[cim-target=\"" + object.attributes.getNamedItem("rdf:ID").value + "\"]").html(value);
+            }
+        }
+
     });
+
+    /* Added by Vaibhav Bansal on 05-10-2020 -- 
+     * This function is used to change the Name of the objects that are inside the container(or ul) of another 
+     * object.
+     * For example -. To Change the name of all the PhaseImpedanceObjects 
+     * under particular PerlengthPhaseImpedance's name. All these PhaseImpedanceData objects donot
+     * have any IdentifiedObject.name property. ie PhaseImpedanceData is not derived from IdentifiedObject.
+     */
+    function changeDependentNameAttributeValue(object, type, value) {
+
+        if (type == "PerLengthPhaseImpedance") {
+            //get all the PhaseImpedanceData Objects
+
+            let allPhaseImpedanceData = self.model.getTargets(
+                [object],
+                "PerLengthPhaseImpedance.PhaseImpedanceData"
+            );
+
+            allPhaseImpedanceData.forEach(function (element, index) {
+
+                let allSequenceNumber = Object.values(element.children).filter(function (obj) {
+                    return obj.localName == "PhaseImpedanceData.sequenceNumber"
+                });
+
+                let objSequenceNumber = allSequenceNumber[0]; //since each PhaseImpedancedata have only single sequenceNumber
+
+                if (objSequenceNumber) {
+                    //if sequence number is defined then, get the value of the sequence number
+                    let nSeqNumberValue = objSequenceNumber.childNodes[0].nodeValue;
+
+                    /* append the name of the PerLengthPhaseImpedance Object with Sequence Number
+                     * of PhaseImpedanceData Object. The Resultant string is the name of the 
+                     * PhaseImpedanceData Object
+                     */
+
+                    let nPhaseImpedanceDataName = value + "_" + nSeqNumberValue;
+                    let target = d3.select("div.tree")
+                        .selectAll("ul#" + element.attributes.getNamedItem('rdf:ID').value);
+
+                    if (target.empty() === false) {
+
+                        //if the target ul is not empty, the select the button element and change the name of the button
+
+                        let btn = d3.select(target.node().parentNode).select("button");
+
+                        btn.html(nPhaseImpedanceDataName);
+                    }
+                    $("[cim-target=\"" + element.attributes.getNamedItem('rdf:ID').value + "\"]").html(value);
+                }
+            });
+        }
+        else {
+            //do this for other types if required...
+        }
+    }
 
     // listen to 'addLink' event from model
     self.model.on("addLink", function (source, linkName, target) {
@@ -438,6 +543,12 @@ function cimTreeTag(opts) {
         let allCoordinateSystems = null;
         let allPositionPoints = null;
 
+
+        //Added by Vaibhav Bansal on 30-09-2020
+        let allPerlengthPhaseImpedance = null;
+        let allPhaseImpedanceData = null;
+        //
+
         // setup the right function to get objects
         let getObjects = self.model.getObjects;
         let getConnectors = self.model.getObjects;
@@ -482,6 +593,7 @@ function cimTreeTag(opts) {
             "cim:NonlinearShuntCompensator"
         ]);
         yield "TREE: extracted equipments";
+
         // get additional objects
         allSubGeoRegions = getObjects(["cim:SubGeographicalRegion"])["cim:SubGeographicalRegion"];
         allGeoRegions = getObjects(["cim:GeographicalRegion"])["cim:GeographicalRegion"];
@@ -491,6 +603,16 @@ function cimTreeTag(opts) {
         allCoordinateSystems = getObjects(["cim:CoordinateSystem"])["cim:CoordinateSystem"];
         allPositionPoints = getObjects(["cim:PositionPoint"])["cim:PositionPoint"];
 
+
+        /*
+         * Added by Vaibhav Bansal on 30-09-2020
+         * The PerLengthPhaseImpedance and PhaseImpedanceData might not be nessacary linked to the CIM Objects
+         * So we get all the Objects for PhaseImpedanceData and PerLengthPhaseImpedance
+         */
+        allPhaseImpedanceData = getObjects(["cim:PhaseImpedanceData"])["cim:PhaseImpedanceData"];
+        allPerlengthPhaseImpedance = getObjects(["cim:PerLengthPhaseImpedance"])["cim:PerLengthPhaseImpedance"];
+        //
+
         if (showAllObjects === false) {
             allContainers = self.model.getLinkedObjects(
                 contNames,
@@ -498,25 +620,70 @@ function cimTreeTag(opts) {
                     "Substation.VoltageLevels/EquipmentContainer.Equipments",
                     "Substation.VoltageLevels/VoltageLevel.Bays/EquipmentContainer.Equipments"
                 ]);
+
             allMeasurements = self.model.getLinkedObjects(
                 measNames,
                 ["Measurement.PowerSystemResource"]);
+
             allGeneratingUnits = self.model.getLinkedObjects(
                 genNames,
                 ["GeneratingUnit.RotatingMachine"]);
+
             allSubGeoRegions = allSubGeoRegions.concat(
                 self.model.getTargets(
                     allContainers["cim:Substation"],
                     "Substation.Region"));
+
             allGeoRegions = allGeoRegions.concat(
                 self.model.getTargets(
                     allSubGeoRegions,
                     "SubGeographicalRegion.Region"));
+
             allSubGeoRegions = [...new Set(allSubGeoRegions)];
             allGeoRegions = [...new Set(allGeoRegions)];
+
+
+            /*
+             * Added by Vaibhav bansal on 30-09-2020
+             * Get all the PerLengthPhaseImpedance objects that are linked with ACLineSegments using
+             * the link ACLineSegment.PerLengthImpedance
+             * Append/Concat all the PerLengthPhaseImpedance into a single Object
+             */
+            allPerlengthPhaseImpedance = allPerlengthPhaseImpedance.concat(
+                self.model.getTargets(
+                    eqs["cim:ACLineSegment"],
+                    "ACLineSegment.PerLengthImpedance"
+                )
+            );
+
+            /*
+             * Added by vaibhav bansal on 30-09-2020
+             * Get all the PerLengthPhaseImpedance objects that are linked with 
+             * PhaseImpedanceData using link PhaseImpedanceData.PerLengthPhaseImpedance
+             */
+            allPerlengthPhaseImpedance = allPerlengthPhaseImpedance.concat(
+                self.model.getTargets(
+                    allPhaseImpedanceData,
+                    "PhaseImpedanceData.PerLengthPhaseImpedance"
+                )
+            );
+
+            //Added by Vaibhav bansal on 05-10-2020 - Get all the PhaseImpedanceObjects using Inverse Link name
+            allPhaseImpedanceData = allPhaseImpedanceData.concat(
+                self.model.getTargets(
+                    allPerlengthPhaseImpedance,
+                    "PerLengthPhaseImpedance.PhaseImpedanceData"
+                )
+            );
+
+            //to maintain uniqueness, as we want all unqiue PerLengthPhaseImpedance Objects and PhaseImpedanceData Objects
+            allPerlengthPhaseImpedance = [...new Set(allPerlengthPhaseImpedance)];
+            allPhaseImpedanceData = [...new Set(allPerlengthPhaseImpedance)];
+
             allLoadResponses = self.model.getLinkedObjects(
                 ["cim:LoadResponseCharacteristic"],
                 ["LoadResponseCharacteristic.EnergyConsumer"]);
+
             allLimitSets = self.model.getLinkedObjects(
                 ["cim:OperationalLimitSet"],
                 ["OperationalLimitSet.Equipment",
@@ -530,12 +697,14 @@ function cimTreeTag(opts) {
             allLoadResponses = getObjects(["cim:LoadResponseCharacteristic"]);
             allLimitSets = getObjects(["cim:OperationalLimitSet"]);
         }
+
         let noDiagObjs = self.model.getObjects(
             ["cim:BaseVoltage",
                 "cim:TapChangerControl",
                 "cim:RegulatingControl",
                 "cim:OperationalLimitType"
             ])
+
         let allBusbarSections = getConnectors(["cim:BusbarSection"])["cim:BusbarSection"];
         let allInjections = eqs["cim:EnergySource"].concat(eqs["cim:EquivalentInjection"]);
         let allRotatingMachines = eqs["cim:SynchronousMachine"].concat(eqs["cim:AsynchronousMachine"]);
@@ -549,7 +718,7 @@ function cimTreeTag(opts) {
         //Added by SS
         self.analogs(cimMeasurements, allMeasurements["cim:Analog"]);
         self.analogValues(cimMeasurements, []);
-        
+
         // let discEnter = self.elements(cimMeasurements, "Discrete", "Discretes", allMeasurements["cim:Discrete"]);
         // self.createDeleteMenu(discEnter);
         //Added by SS
@@ -599,6 +768,14 @@ function cimTreeTag(opts) {
         self.coordinateSystems(cimContainers, allCoordinateSystems);
 
         self.geoRegions(cimContainers, allGeoRegions);
+
+        /*
+         * Added by Vaibhav bansal on 30-09-2020
+         * Create the perLengthPhaseImpedance Objects and for each PerLengthPhaseImpedance Objects Create the 
+         * PhaseImpedanceObjects
+         */
+        self.perLengthPhaseImpedances(cimContainers, allPerlengthPhaseImpedance);
+
         self.substations(cimContainers, allContainers["cim:Substation"]);
         let lineEnter = self.elements(cimContainers, "Line", "Lines", allContainers["cim:Line"]);
         self.createDeleteMenu(lineEnter);
@@ -632,6 +809,15 @@ function cimTreeTag(opts) {
         self.createAddButton(cimContainers, "ThermalGeneratingUnit");
         self.createAddButton(cimCurvesAndRegs, "LoadResponseCharacteristic");
         self.createAddButton(cimLimits, "OperationalLimitType");
+
+        /*
+         * Added by Vaibhav Bansal on 30-09-2020
+         * On Clicking the PerLengthPhaseImpedance we can add as many PerlengthPhaseImpedance Objects.
+         * Donot add the createAddButton for PhaseImpedanceData. Since all PhaseImpedanceObjects are 
+         * inside PerLengthPhaseImpedance and are added automatically on the basis of conductor count
+         * value
+        */
+        self.createAddButton(cimContainers, "PerLengthPhaseImpedance");
     }
 
     //Added by SS
@@ -798,6 +984,52 @@ function cimTreeTag(opts) {
             subGeos);
         self.createDeleteMenu(subGeoEnter);
     }
+
+
+    /*
+    * Added by Vaibhav Bansal on 30-09-2020
+    */
+    self.perLengthPhaseImpedances = function (tab, allPerlengthPhaseImpedance) {
+        let perLengthPhaseImpedanceEnter = self.elements(tab, "PerLengthPhaseImpedance", "Per Length Phase Impedance", allPerlengthPhaseImpedance);
+
+        perLengthPhaseImpedanceEnter.each(function (d, i) {
+
+            let phaseImpedanceData = self.model.getTargets(
+                [d],
+                "PerLengthPhaseImpedance.PhaseImpedanceData");
+
+            self.phaseImpedanceData(
+                d3.select(this),
+                phaseImpedanceData);
+
+            //Donot Add Sub Add Button For Phase Impedance Data. As this PhaseImpedance Data is Added Automatically
+            //on choosing/selecting conductor count value.
+
+            // self.subAddButton(
+            //     d3.select(this),
+            //     "PhaseImpedanceData",
+            //     "cim:PhaseImpedanceData.PerLengthPhaseImpedance");
+        });
+        self.createDeleteMenu(perLengthPhaseImpedanceEnter);
+    }
+
+    /*
+     * Added by Vaibhav Bansal on 30-09-2020
+     */
+    self.phaseImpedanceData = function (perLengthPhaseImpedance, phaseImpedanceData) {
+        let objPerLengthPhaseImpedance = perLengthPhaseImpedance.data()[0];
+
+        let phaseImpedanceDataEnter = self.elements(
+            perLengthPhaseImpedance,
+            objPerLengthPhaseImpedance.attributes.getNamedItem("rdf:ID").value + "PhaseImpedanceData",
+            "Phase Impedance Data",
+            phaseImpedanceData,
+            undefined,
+            true);
+
+        self.createDeleteMenu(phaseImpedanceDataEnter);
+    }
+
 
     self.substations = function (tab, allSubstations) {
         let subEnter = self.elements(tab, "Substation", "Substations", allSubstations);
@@ -1049,7 +1281,13 @@ function cimTreeTag(opts) {
         btnSel.on("contextmenu", menu);
     }
 
-    self.elements = function (cimNetwork, name, printName, data, isSubobject) {
+    /*
+     * Changed by Vaibhav Bansal on 30-09-2020 - 
+     * Added 6th Argument - bShowElementsListExpanded -> To show the element as expanded or not. By 
+     * Defaullt value is set to false/undefined/null
+    */
+    self.elements = function (cimNetwork, name, printName, data, isSubobject, bShowElementsListExpanded) {
+
         let elementsTopContainer = cimNetwork.select("li." + name + "s");
         let elements = elementsTopContainer.select("ul#" + name + "sList");
         if (elementsTopContainer.empty() === true) {
@@ -1078,7 +1316,8 @@ function cimTreeTag(opts) {
                 .select("div")
                 .append("ul")
                 .attr("id", name + "sList")
-                .attr("class", "collapse");
+                //.attr("class", "collapse"); Changed by Vaibhav bansal -> To Show Elements List as expanded
+                .attr("class", (bShowElementsListExpanded) ? "collapse show" : "collapse");
         }
 
         let elementTopContainer = elements
@@ -1129,6 +1368,7 @@ function cimTreeTag(opts) {
                 if (typeof (name) !== "undefined") {
                     return name.innerHTML;
                 }
+
                 return "unnamed";
             })
             .attr("draggable", "true")
@@ -1239,8 +1479,12 @@ function cimTreeTag(opts) {
                         "#Location.PositionPoints",
                         //"#PositionPoint.Location",
                         "#CoordinateSystem.Location",
-                        "#Location.PowerSystemResources"
+                        "#Location.PowerSystemResources",
                         //"#PowerSystemResource.Location"
+
+                        //Added by Vaibhav bansal on 30-09-2020 - We donot want to show this link in UI. That's why
+                        //it is present in hiddenlinks
+                        "#PhaseImpedanceData.PerLengthPhaseImpedance"
 
                     ];
 
@@ -1336,33 +1580,62 @@ function cimTreeTag(opts) {
             });
         // String attributes 
         elementDiv.filter(function (d) {
-                let attrType = self.model.schema.getSchemaAttributeType(d);
-                return attrType[0] === "#String";
-            }).append("input")
+            let attrType = self.model.schema.getSchemaAttributeType(d);
+            return attrType[0] === "#String";
+        }).append("input")
             .attr("class", "form-control")
             .each(setValueFromModel)
             .attr("type", "text")
             .on("input", attrInput);
+
         // Integer attributes
+        //Changed by Vaibhav Bansal on 05-10-2020
+        // elementDiv.filter(function (d) {
+        //     let attrType = self.model.schema.getSchemaAttributeType(d);
+        //     return attrType[0] === "#Integer";
+        // }).append("input")
+        //     .attr("class", "form-control")
+        //     .each(setIntValueFromModel)
+        //     .attr("type", "number")
+        //     .on("input", attrInput);
+
+        /*Changed by Vaibhav bansal on 05-10-2020 : Add the readonly attribute to input fields based on the attribute type*/
         elementDiv.filter(function (d) {
-                let attrType = self.model.schema.getSchemaAttributeType(d);
-                return attrType[0] === "#Integer";
-            }).append("input")
+            let attrType = self.model.schema.getSchemaAttributeType(d);
+            return attrType[0] === "#Integer";
+        }).append("input")
             .attr("class", "form-control")
             .each(setIntValueFromModel)
             .attr("type", "number")
-            .on("input", attrInput);
+            .on("input", attrInput)
+            .attr('readonly', function (d) {
+                let about = d.attributes.getNamedItem("rdf:about").value;
+                let ns = "cim:";
+                if (about.startsWith("#") === false) {
+                    ns = "entsoe:";
+                }
+                about = about.substring(about.indexOf("#") + 1);
+                let attrName = ns + about;
+
+                /*Set the attribute name as readonly attribute based on the basis of the attribute name*/
+                if (attrName == "cim:PhaseImpedanceData.sequenceNumber") {
+                    return "readonly";
+                }
+            })
+
         // Float attributes
         let floats = elementDiv.filter(function (d) {
             let attrType = self.model.schema.getSchemaAttributeType(d);
             return (attrType[0] === "#Float" || attrType[0] === "#Decimal");
         });
+
         floats.append("input")
             .attr("class", "form-control")
             .each(setFloatValueFromModel)
             .attr("type", "number")
             .attr("step", "0.00001")
             .on("input", attrInput);
+
         floats.append("div").attr("class", "input-group-append").append("span").attr("class", "input-group-text cim-tree-attribute-uom")
             .html(function (d) {
                 let attrType = self.model.schema.getSchemaAttributeType(d);
@@ -1388,9 +1661,9 @@ function cimTreeTag(opts) {
         elementBoolList.append("a").attr("class", "dropdown-item").text("false").on("click", setBoolAttr);
         // DateTime attributes (note: such input types are not supported by Firefox) 
         elementDiv.filter(function (d) {
-                let attrType = self.model.schema.getSchemaAttributeType(d);
-                return attrType[0] === "#DateTime";
-            }).append("input")
+            let attrType = self.model.schema.getSchemaAttributeType(d);
+            return attrType[0] === "#DateTime";
+        }).append("input")
             .attr("class", "form-control")
             .each(setValueFromModel)
             .attr("type", "datetime-local")
@@ -1462,9 +1735,78 @@ function cimTreeTag(opts) {
             }
         };
 
+        /*Changed by Vaibhav Bansal on 06-10-2020*/
+        // function setEnumValueFromModel(d) {
+        //     let object = d3.select($(this).parents("li.attribute").first().parent().get(0)).data()[0];
+        //     let value = self.model.getEnum(object, "cim:" + d.attributes[0].value.substring(1));
+        //     if (typeof (value) !== "undefined") {
+        //         let enumRef = value.attributes.getNamedItem("rdf:resource").value;
+        //         d3.select(this).text(enumRef.split("#")[1].split(".")[1]);
+        //     } else {
+        //         d3.select(this).text("none");
+        //     }
+        // };
+
+        /*
+         * Added by Vaibhav bansal on 06-10-2020
+         * This function is called while uploading the file in CIM Editor.
+         * Earlier, this function is used to get enums for a particular object
+         * and set the value in UI using the rdf:resource value of enum attribute
+         * 
+         * But some objects like, PerLengthPhaseImpedance have conductorCount attribute which is 
+         * of enum type. But we donot want to store it as rdf:resource.
+         */
         function setEnumValueFromModel(d) {
+
             let object = d3.select($(this).parents("li.attribute").first().parent().get(0)).data()[0];
-            let value = self.model.getEnum(object, "cim:" + d.attributes[0].value.substring(1));
+            let value = self.model.getAttribute(object, "cim:" + d.attributes[0].value.substring(1));
+            let attr = d3.select($(this).parents("li.attribute").first().get(0)).data()[0];
+            let attrName = "cim:" + attr.attributes[0].value.substring(1);
+
+            if (object.localName == "PerLengthPhaseImpedance") {
+
+                if (attrName == "cim:PerLengthPhaseImpedance.conductorCount") {
+
+                    if (typeof (value) !== "undefined") {
+                        d3.select(this).text(value.innerHTML);
+                        //onInputEnumAttr(value.innerHTML, object, attrName);
+
+                        let objPerLengthPhaseImpedance = Object.values(object.children).filter(function (obj) {
+                            return obj.localName == "IdentifiedObject.name"
+                        })[0];
+
+                        let strName = "";
+                        if (objPerLengthPhaseImpedance) {
+                            strName = objPerLengthPhaseImpedance.childNodes[0].nodeValue;
+                        }
+
+                        //change the attributes of the dependent objects. Example-> PhaseImpedanceData object
+                        //Here object-> PerLengthPhaseImpedance Object
+                        //strName -> Name of the PerLengthPhaseImpedance Object
+                        changeDependentNameAttributeValue(object, object.localName, strName);
+
+                    } else {
+                        d3.select(this).text("none");
+                    }
+                    return;
+                }
+            }
+            //Added by Vaibhav Bansal on 07-10-2020
+            else if (object.localName == "Analog" || object.localName == "Discrete") {
+                if (attrName == "cim:Measurement.phases" || attrName == "cim:Measurement.unitSymbol"
+                    || attrName == "cim:Measurement.unitMultiplier") {
+
+                        if (typeof (value) !== "undefined") {
+                            d3.select(this).text(value.innerHTML);
+                        }
+                        else{
+                            d3.select(this).text("none");
+                        }
+                        return;
+                }
+            }
+
+            //default behaviour
             if (typeof (value) !== "undefined") {
                 let enumRef = value.attributes.getNamedItem("rdf:resource").value;
                 d3.select(this).text(enumRef.split("#")[1].split(".")[1]);
@@ -1472,6 +1814,7 @@ function cimTreeTag(opts) {
                 d3.select(this).text("none");
             }
         };
+
         // set a boolean attribute according to user input
         function setBoolAttr(d) {
             // change the element's text
@@ -1482,17 +1825,122 @@ function cimTreeTag(opts) {
             // update the model
             self.model.setAttribute(object, attrName, value);
         };
+
+        //Changed by Vaibhav Bansal on 06-10-2020
         // set an enum attribute according to user input
+        // function setEnumAttr(d) {
+        //     // change the element's text
+        //     $(this).parent().parent().find(">button>span.enumVal").text(d);
+        //     let object = d3.select($(this).parents("li.attribute").first().parent().get(0)).data()[0];
+        //     let attr = d3.select($(this).parents("li.attribute").first().get(0)).data()[0];
+        //     let attrName = "cim:" + attr.attributes[0].value.substring(1);
+        //     let value = self.model.schema.getSchemaEnumName(attr) + "." + d;
+        //     // update the model
+        //     self.model.setEnum(object, attrName, value);
+
+        //     onInputEnumAttr(d, object, attrName);
+        // };
+
+        /*
+         * Changed by Vaibhav Bansal on 06-10-2020
+         * store some enum attributes as normal values instead of a rdf:resource
+         * Earlier it was hard-coded that all the enum attributes are stored as rdf:resource only.
+         * But now, on the basis of the object localname or type, we can take action
+         * accordingly
+         * This function is called when we change the enum attribute
+         */
         function setEnumAttr(d) {
             // change the element's text
             $(this).parent().parent().find(">button>span.enumVal").text(d);
             let object = d3.select($(this).parents("li.attribute").first().parent().get(0)).data()[0];
             let attr = d3.select($(this).parents("li.attribute").first().get(0)).data()[0];
             let attrName = "cim:" + attr.attributes[0].value.substring(1);
-            let value = self.model.schema.getSchemaEnumName(attr) + "." + d;
-            // update the model
-            self.model.setEnum(object, attrName, value);
+
+            if (object.localName == "PerLengthPhaseImpedance") {
+                /*
+                 * Instead of Setting the Enum, set the attribute instead. 
+                 * Example -> For PerLengthPhaseImpedance, conductorCount is an enum. To store this
+                 * property of PerLengthPhaseImpedance as value instead of rdf:resource
+                 */
+                if (attrName == "cim:PerLengthPhaseImpedance.conductorCount") {
+                    self.model.setAttribute(object, attrName, d);
+                }
+                else {
+                    let value = self.model.schema.getSchemaEnumName(attr) + "." + d;
+                    // update the model
+                    self.model.setEnum(object, attrName, value);
+                }
+            }
+            //Added by Vaibhav Bansal on 07-10-2020
+            else if (object.localName == "Discrete" || object.localName == "Analog") {
+                if (attrName == "cim:Measurement.phases" || attrName == "cim:Measurement.unitSymbol"
+                    || attrName == "cim:Measurement.unitMultiplier") {
+
+                    self.model.setAttribute(object, attrName, d);
+                }
+                else {
+                    let value = self.model.schema.getSchemaEnumName(attr) + "." + d;
+                    // update the model
+                    self.model.setEnum(object, attrName, value);
+                }
+            }
+            else {
+                let value = self.model.schema.getSchemaEnumName(attr) + "." + d;
+                // update the model
+                self.model.setEnum(object, attrName, value);
+            }
+
+            onInputEnumAttr(d, object, attrName);
         };
+
+        /*Added by Vaibhav Bansal on 30-09-2020*/
+        function onInputEnumAttr(d, object, attrName) {
+            /*
+             * To Perform Operation based on the Object Type (like PerLengthPhaseImpedance)
+             * and attribute type (like cim:PerLengthPhaseImpedance.conductorCount)
+             */
+            if (object.localName == "PerLengthPhaseImpedance" && attrName == "cim:PerLengthPhaseImpedance.conductorCount") {
+
+                /* First Delete All the PhaseImpedanceData objects of PerLengthPhaseImpedance Objects*/
+                let allPhaseImpedanceData = self.model.getTargets(
+                    [object],
+                    "PerLengthPhaseImpedance.PhaseImpedanceData"
+                );
+                self.model.deleteObjects(allPhaseImpedanceData);
+
+                /*Use the value of conductor count and based on the value of conductor count, create that many number of 
+                 * PhaseImpedanceData Objects under a particular PerLengthPhaseImpedance Objects
+                 * And delete all other previous created objects
+                 */
+
+                let objPerLengthPhaseImpedance = Object.values(object.children).filter(function (obj) {
+                    return obj.localName == "IdentifiedObject.name"
+                })[0];
+
+                let strName = "";
+                if (objPerLengthPhaseImpedance) {
+                    strName = objPerLengthPhaseImpedance.childNodes[0].nodeValue;
+                }
+
+                let nValue = parseInt(d);
+                let nTotalObjectsToShow = (nValue) * (nValue - 1) / 2 + nValue;
+
+                for (let i = 1; i <= nTotalObjectsToShow; i++) {
+
+                    let newObject = self.model.createObject("cim:" + "PhaseImpedanceData");
+                    self.model.setLink(newObject, "cim:PhaseImpedanceData.PerLengthPhaseImpedance", object);
+                    self.model.setAttribute(newObject, "cim:PhaseImpedanceData.sequenceNumber", i);
+                    self.model.addToActiveDiagram(newObject, []);
+
+                    /*Added by Vaibhav Bansal on 05-10-2020*/
+                    self.model.trigger("setAttribute", newObject, "", strName + "_" + i);
+
+                }
+            }
+            else {
+                //do something here for different types of object.localnames and attribute names
+            }
+        }
 
         function attrInput(d) {
             let object = d3.select($(this).parents("ul").first().get(0)).data()[0];

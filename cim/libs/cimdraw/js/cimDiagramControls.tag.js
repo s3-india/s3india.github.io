@@ -1168,11 +1168,17 @@ function cimDiagramControlsTag(opts) {
                 self.enableConnect();
             }
         });
+
+        //This statement will select all the lables except connectLabel and remove the active class from all lables except connectLabel
         d3.select(self.root).selectAll("label:not(#connectLabel)").classed("active", false);
+        
         self.status = "CONNECT";
 
+        //This statement will select all the terminals of all svg tags except edges tags
         d3.select("svg").selectAll("svg > g.diagram > g:not(.edges) > g > g.Terminal")
             .on("click", function (d) {
+
+                //This is an accessor function
                 let line = d3.line()
                     .x(function (d) {
                         return d.x;
@@ -1180,11 +1186,13 @@ function cimDiagramControlsTag(opts) {
                     .y(function (d) {
                         return d.y;
                     });
+
                 // handle rotation of terminal
                 let termXY = {
                     x: d.x,
                     y: d.y
                 };
+                
                 if (d.rotation > 0) {
                     termXY = self.parent.rotateTerm(d);
                 }
@@ -2260,16 +2268,16 @@ function cimDiagramControlsTag(opts) {
         // Prevent the default refresh event under WINDOWS system
         event.preventDefault();
         //alert('you pressed F5!');
-        var root = location.protocol + '//' + location.host + location.pathname;
-        window.location.href = root;
+        var root = location.protocol + '//' + location.host;
+        window.loacation.href = root;
     });
 
     // Returning false stops the event and prevents default browser events
     // Mac OS system defines `command + r` as a refresh shortcut
     hotkeys('ctrl+r, command+r', function () {
         // alert('stopped reload!');
-        var root = location.protocol + '//' + location.host + location.pathname;
-        window.location.href = root;
+        var root = location.protocol + '//' + location.host;
+        window.loacation.href = root;
         //return false;
     });
 

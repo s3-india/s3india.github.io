@@ -5,6 +5,7 @@ function cimDrawTag(opts) {
     let self = this;
 
     let cimFile = {};
+    let bNewFile = false;
     let cimFileReader = {};
 
     self.cimModel = cimModel();
@@ -22,6 +23,14 @@ function cimDrawTag(opts) {
     }, false);
 
     fileElem.addEventListener("change", handleFiles, false);
+
+    if (navigator.userAgent.toLowerCase().indexOf(' electron/') > -1) {
+        // Electron-specific code
+    } else {
+
+        var fileSelectList = document.getElementById("fileSelectList");
+        fileSelectList.style.display = "none";
+    }
 
     function handleFiles() {
         if (!this.files.length) {
@@ -106,7 +115,29 @@ function cimDrawTag(opts) {
         });
 
         $("#cim-create-new-modal").on("click", function () {
+            bNewFile = true;
             route("/" + cimFile.name + "/diagrams");
+        });
+        $("#cim-save-file-modal").on("click", function () {
+            let strFileName = document.getElementById('cimFileName').value;
+            if (strFileName == "" || strFileName == null || strFileName.length == 0) {
+                alert("Invalid File Name. Retry!")
+                return;
+            }
+            let out = self.cimModel.save();
+
+            let objMsg = {
+                strEvent: "cim_save_file",
+                objData: {
+                    strVal: out
+                }
+            }
+            bNewFile = false;
+            objMsg.objData.strFileName = strFileName;
+            cimFile.name = strFileName;
+            window.parent.postMessage(objMsg, "*");
+
+            $("#cimFileSaveModel").modal("hide");
         });
 
         $("#load-boundary").on("click", function () {
@@ -260,7 +291,7 @@ function cimDrawTag(opts) {
 
                 //Added by Satyam Singh
                 self.cimModel.registerUndoService();
-                
+
             }).catch(function (e) {
                 $("#loadingDiagramMsg").append("<br>" + e);
                 $("#cim-loading-modal-error-container").show();
@@ -300,8 +331,33 @@ function cimDrawTag(opts) {
                 let blob = new Blob([out], {
                     type: "text/xml"
                 });
-                let objectURL = URL.createObjectURL(blob);
-                $("#cim-save").attr("href", objectURL);
+
+                if (navigator.userAgent.toLowerCase().indexOf(' electron/') > -1) {
+                    // Electron-specific code
+
+                    let objMsg = {
+                        strEvent: "cim_save_file",
+                        objData: {
+                            strVal: out
+                        }
+                    }
+
+                    if (bNewFile) {
+
+                        $("#cimFileSaveModel").modal("show");
+
+                        // bNewFile = false;
+                        // objMsg.objData.strFileName = strFileName;
+                        // window.parent.postMessage(objMsg, "*");
+                    } else {
+                        objMsg.objData.strFileName = cimFile.name;
+                        window.parent.postMessage(objMsg, "*");
+                    }
+
+                } else {
+                    let objectURL = URL.createObjectURL(blob);
+                    $("#cim-save").attr("href", objectURL);
+                }
             });
             $("#cgmes-save").off("click");
             // allow saving a copy of the file as CGMES
