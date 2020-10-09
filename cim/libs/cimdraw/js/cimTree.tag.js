@@ -1805,6 +1805,20 @@ function cimTreeTag(opts) {
                         return;
                 }
             }
+            //Added by Vaibhav Bansal on 09-10-2020
+            else if(object.localName == "EnergyConsumer"){
+                if(attrName == "cim:EnergyConsumer.phaseConnection"){
+
+                    if (typeof (value) !== "undefined") {
+                        d3.select(this).text(value.innerHTML);
+                    }
+                    else{
+                        d3.select(this).text("none");
+                    }
+                    return;
+                }
+            }
+            //
 
             //default behaviour
             if (typeof (value) !== "undefined") {
@@ -1884,6 +1898,19 @@ function cimTreeTag(opts) {
                     self.model.setEnum(object, attrName, value);
                 }
             }
+            //Added by Vaibhav Bansal on 09-10-2020
+            else if(object.localName == "EnergyConsumer"){
+                if(attrName == "cim:EnergyConsumer.phaseConnection"){
+
+                    self.model.setAttribute(object, attrName, d);
+                }
+                else {
+                    let value = self.model.schema.getSchemaEnumName(attr) + "." + d;
+                    // update the model
+                    self.model.setEnum(object, attrName, value);
+                }
+            }
+            //
             else {
                 let value = self.model.schema.getSchemaEnumName(attr) + "." + d;
                 // update the model

@@ -5509,6 +5509,53 @@ Mechanical limit of the busbar in the substation itself. Used for short circuit 
         <rdfs:comment  rdf:parseType="Literal">Reactive power of the load that is a fixed quantity. Load sign convention is used, i.e. positive sign means flow out from a node.</rdfs:comment>
         <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
     </rdf:Description>
+
+
+    <!--Added by Vaibhav Bansal on 09-10-2020-->
+    <rdf:Description rdf:about="#EnergyConsumer.phaseConnection">
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#attribute"/>
+        <rdfs:label xml:lang="en">phaseConnection</rdfs:label>
+        <rdfs:domain rdf:resource="#EnergyConsumer"/>
+        <rdfs:range rdf:resource="#PhaseShuntConnectionKind"/>
+        <cims:multiplicity rdf:resource="http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:0..1" />
+        <rdfs:comment  rdf:parseType="Literal">The type of phase connection, such as wye or delta.</rdfs:comment>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PhaseShuntConnectionKind">
+        <rdfs:label xml:lang="en">PhaseShuntConnectionKind</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">The type of phase connection, such as wye or delta.</rdfs:comment>
+        <cims:belongsToCategory rdf:resource="#Package_Core"/>
+        <cims:stereotype rdf:resource="http://iec.ch/TC57/NonStandard/UML#enumeration"/>
+        <rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PhaseShuntConnectionKind.D">
+        <rdfs:label xml:lang="en">D</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Type of Phase : D</rdfs:comment>
+        <rdf:type rdf:resource="#PhaseShuntConnectionKind"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PhaseShuntConnectionKind.G">
+        <rdfs:label xml:lang="en">G</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Type of Phase : G</rdfs:comment>
+        <rdf:type rdf:resource="#PhaseShuntConnectionKind"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="#PhaseShuntConnectionKind.I">
+        <rdfs:label xml:lang="en">I</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Type of Phase : I</rdfs:comment>
+        <rdf:type rdf:resource="#PhaseShuntConnectionKind"/>
+    </rdf:Description>
+     <rdf:Description rdf:about="#PhaseShuntConnectionKind.Y">
+        <rdfs:label xml:lang="en">Y</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Type of Phase : Y</rdfs:comment>
+        <rdf:type rdf:resource="#PhaseShuntConnectionKind"/>
+    </rdf:Description>
+     <rdf:Description rdf:about="#PhaseShuntConnectionKind.Yn">
+        <rdfs:label xml:lang="en">Yn</rdfs:label>
+        <rdfs:comment  rdf:parseType="Literal">Type of Phase : Yn</rdfs:comment>
+        <rdf:type rdf:resource="#PhaseShuntConnectionKind"/>
+    </rdf:Description>
+    <!---->
+
+
     <rdf:Description rdf:about="#ReactivePower">
         <rdfs:label xml:lang="en">ReactivePower</rdfs:label>
         <rdfs:comment  rdf:parseType="Literal">Product of RMS value of the voltage and the RMS value of the quadrature component of the current.</rdfs:comment>
